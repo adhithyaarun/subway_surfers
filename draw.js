@@ -41,21 +41,21 @@ function drawScene(gl, programInfo, buffer, deltaTime, object, projectionMatrix)
     // Tell WebGL how to pull out the colors from the color buffer
     // into the vertexColor attribute.
     {
-        const numComponents = 4;
+        const numComponents = 2;
         const type = gl.FLOAT;
         const normalize = false;
         const stride = 0;
         const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer.color);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer.texture);
         gl.vertexAttribPointer(
-            programInfo.attribLocations.vertexColor,
+            programInfo.attribLocations.textureCoord,
             numComponents,
             type,
             normalize,
             stride,
             offset);
         gl.enableVertexAttribArray(
-            programInfo.attribLocations.vertexColor);
+            programInfo.attribLocations.textureCoord);
     }
 
     // Tell WebGL which indices to use to index the vertices
@@ -74,6 +74,14 @@ function drawScene(gl, programInfo, buffer, deltaTime, object, projectionMatrix)
         false,
         modelViewMatrix);
 
+    // Tell WebGL we want to affect texture unit 0
+    gl.activeTexture(gl.TEXTURE0);
+
+    // Bind the texture to texture unit 0
+    gl.bindTexture(gl.TEXTURE_2D, object.texture);
+
+    // Tell the shader we bound the texture to texture unit 0
+    gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
     {
         const vertexCount = object.indices.length;
         const type = gl.UNSIGNED_SHORT;

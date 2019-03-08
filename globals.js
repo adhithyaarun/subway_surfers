@@ -20,6 +20,11 @@ const IN_AIR = 1;
 // Music
 const MUSIC = './music.mp3';
 
+// Textures
+const TEXTURE_TRACK = './track.jpg';
+const TEXTURE_WALL = './wall.png';
+const TEXTURE_PLAIN = './plain.jpg';
+
 /**********************
     GLOBAL VARIABLES
 **********************/

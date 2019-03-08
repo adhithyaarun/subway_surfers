@@ -22,25 +22,27 @@ function main() {
   // Vertex shader program
   const vsSource = `
     attribute vec4 aVertexPosition;
-    attribute vec4 aVertexColor;
+    attribute vec2 aTextureCoord;
 
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
 
-    varying lowp vec4 vColor;
+    varying highp vec2 vTextureCoord;
 
     void main(void) {
       gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-      vColor = aVertexColor;
+      vTextureCoord = aTextureCoord;
     }
   `;
 
   // Fragment shader program
-  const fsSource = `
-    varying lowp vec4 vColor;
+ const fsSource = `
+    varying highp vec2 vTextureCoord;
+
+    uniform sampler2D uSampler;
 
     void main(void) {
-      gl_FragColor = vColor;
+      gl_FragColor = texture2D(uSampler, vTextureCoord);
     }
   `;
 
@@ -56,11 +58,12 @@ function main() {
     program: shaderProgram,
     attribLocations: {
       vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-      vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
+      textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
     },
     uniformLocations: {
       projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
       modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+      uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
     },
   };
 
@@ -69,42 +72,48 @@ function main() {
   var dynamicObjects = [];
   var staticObjects = [];
 
-  dynamicObjects.push(createCube  ( 2.0,   0.0,   -6.0,   10.0,   0.7));    // Floating Cube
-  dynamicObjects.push(createCube  (-2.0,   0.0,   -6.0,  -10.0,   0.5));    // Floating Cube
-  dynamicObjects.push(createCube  ( 2.0,   0.0,  -16.0,   10.0,   0.7));    // Floating Cube
-  dynamicObjects.push(createCube  (-2.0,   0.0,  -16.0,  -10.0,   0.5));    // Floating Cube
-  dynamicObjects.push(createCube  ( 2.0,   0.0,  -26.0,   10.0,   0.7));    // Floating Cube
-  dynamicObjects.push(createCube  (-2.0,   0.0,  -26.0,  -10.0,   0.5));    // Floating Cube
-  dynamicObjects.push(createBar   (M_TRACK,-2.5,  -20.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (L_TRACK,-2.5,  -40.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5,  -60.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (R_TRACK,-2.5,  -80.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -120.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (L_TRACK,-2.5, -140.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -160.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (R_TRACK,-2.5, -180.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -220.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (L_TRACK,-2.5, -240.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -260.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (R_TRACK,-2.5, -280.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -320.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (L_TRACK,-2.5, -340.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -360.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createBar   (R_TRACK,-2.5, -380.0,    0.0,   1.0));   // Barricade
-  dynamicObjects.push(createTrain (R_TRACK,-2.0, -160.0,    0.0,   1.0));   // Train
-  dynamicObjects.push(createTrain (L_TRACK,-2.0, -210.0,    0.0,   1.0));   // Train
-  dynamicObjects.push(createTrain (M_TRACK,-2.0, -260.0,    0.0,   1.0));   // Train
-  dynamicObjects.push(createTrain (R_TRACK,-2.0, -310.0,    0.0,   1.0));   // Train
-  dynamicObjects.push(createTrain (L_TRACK,-2.0, -370.0,    0.0,   1.0));   // Train
+  dynamicObjects.push(createCube  ( 2.0,   0.0,   -6.0,   10.0,   0.7, gl));    // Floating Cube
+  dynamicObjects.push(createCube  (-2.0,   0.0,   -6.0,  -10.0,   0.5, gl));    // Floating Cube
+  dynamicObjects.push(createCube  ( 2.0,   0.0,  -16.0,   10.0,   0.7, gl));    // Floating Cube
+  dynamicObjects.push(createCube  (-2.0,   0.0,  -16.0,  -10.0,   0.5, gl));    // Floating Cube
+  dynamicObjects.push(createCube  ( 2.0,   0.0,  -26.0,   10.0,   0.7, gl));    // Floating Cube
+  dynamicObjects.push(createCube  (-2.0,   0.0,  -26.0,  -10.0,   0.5, gl));    // Floating Cube
+  dynamicObjects.push(createBar   (M_TRACK,-2.5,  -20.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (L_TRACK,-2.5,  -40.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (M_TRACK,-2.5,  -60.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (R_TRACK,-2.5,  -80.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (M_TRACK,-2.5, -120.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (L_TRACK,-2.5, -140.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (M_TRACK,-2.5, -160.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (R_TRACK,-2.5, -180.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (M_TRACK,-2.5, -220.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (L_TRACK,-2.5, -240.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (M_TRACK,-2.5, -260.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (R_TRACK,-2.5, -280.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (M_TRACK,-2.5, -320.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (L_TRACK,-2.5, -340.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (M_TRACK,-2.5, -360.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createBar   (R_TRACK,-2.5, -380.0,    0.0,   1.0, gl));   // Barricade
+  dynamicObjects.push(createTrain (R_TRACK,-2.0, -160.0,    0.0,   1.0, gl));   // Train
+  dynamicObjects.push(createTrain (L_TRACK,-2.0, -210.0,    0.0,   1.0, gl));   // Train
+  dynamicObjects.push(createTrain (M_TRACK,-2.0, -260.0,    0.0,   1.0, gl));   // Train
+  dynamicObjects.push(createTrain (R_TRACK,-2.0, -310.0,    0.0,   1.0, gl));   // Train
+  dynamicObjects.push(createTrain (L_TRACK,-2.0, -370.0,    0.0,   1.0, gl));   // Train
   
   // Last 4 objects are static
-  staticObjects.push(createPlayer( 0.0,  -2.2,   -10.0,    0.0,   1.0));   // Player
-  staticObjects.push(createGround( 0.0,  -4.0,   -5.0,    0.0,   1.0));    // Ground
-  staticObjects.push(createWall  (-7.0,  -3.0,   -5.0,    0.0,   1.0));    // Left Wall
-  staticObjects.push(createWall  ( 7.0,  -3.0,   -5.0,    0.0,   1.0));    // Right Wall
-  staticObjects.push(createTrack ( L_TRACK,  -3.0,   -5.0,    0.0,   1.0));    // Left Track
-  staticObjects.push(createTrack ( M_TRACK,  -3.0,   -5.0,    0.0,   1.0));    // Middle Track
-  staticObjects.push(createTrack ( R_TRACK,  -3.0,   -5.0,    0.0,   1.0));    // Right Track
+  staticObjects.push(createPlayer( 0.0,  -2.2,   -10.0,    0.0,   1.0, gl));   // Player
+  staticObjects.push(createGround( 0.0,  -4.0,   -5.0,    0.0,   1.0, gl));    // Ground
+  staticObjects.push(createWall  (-12.0,  -3.0,   -5.0,    0.0,   1.0, gl));    // Left Wall 1
+  staticObjects.push(createWall  (-12.0,  -3.0,  -30.0,    0.0,   1.0, gl));    // Left Wall 2
+  staticObjects.push(createWall  (-12.0,  -3.0,  -55.0,    0.0,   1.0, gl));    // Left Wall 2
+  staticObjects.push(createWall  (-12.0,  -3.0,  -80.0,    0.0,   1.0, gl));    // Left Wall 2
+  staticObjects.push(createWall  ( 12.0,  -3.0,   -5.0,    0.0,   1.0, gl));    // Right Wall
+  staticObjects.push(createWall  ( 12.0,  -3.0,  -30.0,    0.0,   1.0, gl));    // Left Wall 2
+  staticObjects.push(createWall  ( 12.0,  -3.0,  -55.0,    0.0,   1.0, gl));    // Left Wall 2
+  staticObjects.push(createWall  ( 12.0,  -3.0,  -80.0,    0.0,   1.0, gl));    // Left Wall 2
+  staticObjects.push(createTrack ( L_TRACK,  -3.0,   -5.0,    0.0,   1.0, gl));    // Left Track
+  staticObjects.push(createTrack ( M_TRACK,  -3.0,   -5.0,    0.0,   1.0, gl));    // Middle Track
+  staticObjects.push(createTrack ( R_TRACK,  -3.0,   -5.0,    0.0,   1.0, gl));    // Right Track
 
   var dynamicBuffers = [];
   var staticBuffers = [];
