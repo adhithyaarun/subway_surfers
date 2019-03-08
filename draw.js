@@ -1,25 +1,23 @@
 // Draw the scene.
 function drawScene(gl, programInfo, buffer, deltaTime, object, projectionMatrix) {
     // webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-    // Set the drawing position to the "identity" point, which is
-    // the center of the scene.
+
     const modelViewMatrix = mat4.create();
 
-    // Now move the drawing position a bit to where we want to
-    // start drawing the square.
     mat4.translate(modelViewMatrix,     // destination matrix
                    modelViewMatrix,     // matrix to translate
-                   object.translation);  // amount to translate
+                   object.translation); // amount to translate
 
-    //Write your code to Rotate the cube here//
-    mat4.rotate(modelViewMatrix, // destination matrix
-                modelViewMatrix, // matrix to translate
+    mat4.rotate(modelViewMatrix,        // destination matrix
+                modelViewMatrix,        // matrix to rotate
                 object.rotation,
                 [1.0, 1.0, 1.0]);
 
+    const normalMatrix = mat4.create();
+    mat4.invert(normalMatrix, modelViewMatrix);
+    mat4.transpose(normalMatrix, normalMatrix);
 
-    // Tell WebGL how to pull out the positions from the position
-    // buffer into the vertexPosition attribute
+    // Position
     {
         const numComponents = 3;
         const type = gl.FLOAT;
@@ -38,8 +36,7 @@ function drawScene(gl, programInfo, buffer, deltaTime, object, projectionMatrix)
             programInfo.attribLocations.vertexPosition);
     }
 
-    // Tell WebGL how to pull out the colors from the color buffer
-    // into the vertexColor attribute.
+    // Texture
     {
         const numComponents = 2;
         const type = gl.FLOAT;
@@ -58,13 +55,27 @@ function drawScene(gl, programInfo, buffer, deltaTime, object, projectionMatrix)
             programInfo.attribLocations.textureCoord);
     }
 
-    // Tell WebGL which indices to use to index the vertices
+    // Normal
+    {
+        const numComponents = 3;
+        const type = gl.FLOAT;
+        const normalize = false;
+        const stride = 0;
+        const offset = 0;
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer.normal);
+        gl.vertexAttribPointer(
+            programInfo.attribLocations.vertexNormal,
+            numComponents,
+            type,
+            normalize,
+            stride,
+            offset);
+        gl.enableVertexAttribArray(
+            programInfo.attribLocations.vertexNormal);
+    }
+
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indices);
-
-    // Tell WebGL to use our program when drawing
     gl.useProgram(programInfo.program);
-
-    // Set the shader uniforms
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.projectionMatrix,
         false,
@@ -73,15 +84,15 @@ function drawScene(gl, programInfo, buffer, deltaTime, object, projectionMatrix)
         programInfo.uniformLocations.modelViewMatrix,
         false,
         modelViewMatrix);
+    gl.uniformMatrix4fv(
+        programInfo.uniformLocations.normalMatrix,
+        false,
+        normalMatrix);
 
-    // Tell WebGL we want to affect texture unit 0
     gl.activeTexture(gl.TEXTURE0);
-
-    // Bind the texture to texture unit 0
     gl.bindTexture(gl.TEXTURE_2D, object.texture);
-
-    // Tell the shader we bound the texture to texture unit 0
     gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+
     {
         const vertexCount = object.indices.length;
         const type = gl.UNSIGNED_SHORT;

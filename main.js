@@ -22,27 +22,44 @@ function main() {
   // Vertex shader program
   const vsSource = `
     attribute vec4 aVertexPosition;
+    attribute vec3 aVertexNormal;
     attribute vec2 aTextureCoord;
 
+    uniform mat4 uNormalMatrix;
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
 
     varying highp vec2 vTextureCoord;
+    varying highp vec3 vLighting;
 
     void main(void) {
       gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
       vTextureCoord = aTextureCoord;
+
+      highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
+      // highp vec3 directionalLightColor = vec3(1.0, 1.0, 1.0);
+      highp vec3 directionalLightColor = vec3(1.0, 0.95, 0.82);
+      // highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
+      highp vec3 directionalVector = vec3(0.25, 0.8, 0.75);
+
+      highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+
+      highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+      vLighting = ambientLight + (directionalLightColor * directional);
     }
   `;
 
   // Fragment shader program
  const fsSource = `
     varying highp vec2 vTextureCoord;
+    varying highp vec3 vLighting;
 
     uniform sampler2D uSampler;
 
     void main(void) {
-      gl_FragColor = texture2D(uSampler, vTextureCoord);
+      highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
+
+      gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
     }
   `;
 
@@ -58,62 +75,21 @@ function main() {
     program: shaderProgram,
     attribLocations: {
       vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+      vertexNormal: gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
       textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
     },
     uniformLocations: {
       projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
       modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+      normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
       uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
     },
   };
 
   // Here's where we call the routine that builds all the
   // objects we'll be drawing.
-  var dynamicObjects = [];
-  var staticObjects = [];
-
-  dynamicObjects.push(createCube  ( 2.0,   0.0,   -6.0,   10.0,   0.7, gl));    // Floating Cube
-  dynamicObjects.push(createCube  (-2.0,   0.0,   -6.0,  -10.0,   0.5, gl));    // Floating Cube
-  dynamicObjects.push(createCube  ( 2.0,   0.0,  -16.0,   10.0,   0.7, gl));    // Floating Cube
-  dynamicObjects.push(createCube  (-2.0,   0.0,  -16.0,  -10.0,   0.5, gl));    // Floating Cube
-  dynamicObjects.push(createCube  ( 2.0,   0.0,  -26.0,   10.0,   0.7, gl));    // Floating Cube
-  dynamicObjects.push(createCube  (-2.0,   0.0,  -26.0,  -10.0,   0.5, gl));    // Floating Cube
-  dynamicObjects.push(createBar   (M_TRACK,-2.5,  -20.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (L_TRACK,-2.5,  -40.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5,  -60.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (R_TRACK,-2.5,  -80.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -120.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (L_TRACK,-2.5, -140.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -160.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (R_TRACK,-2.5, -180.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -220.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (L_TRACK,-2.5, -240.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -260.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (R_TRACK,-2.5, -280.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -320.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (L_TRACK,-2.5, -340.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (M_TRACK,-2.5, -360.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createBar   (R_TRACK,-2.5, -380.0,    0.0,   1.0, gl));   // Barricade
-  dynamicObjects.push(createTrain (R_TRACK,-2.0, -160.0,    0.0,   1.0, gl));   // Train
-  dynamicObjects.push(createTrain (L_TRACK,-2.0, -210.0,    0.0,   1.0, gl));   // Train
-  dynamicObjects.push(createTrain (M_TRACK,-2.0, -260.0,    0.0,   1.0, gl));   // Train
-  dynamicObjects.push(createTrain (R_TRACK,-2.0, -310.0,    0.0,   1.0, gl));   // Train
-  dynamicObjects.push(createTrain (L_TRACK,-2.0, -370.0,    0.0,   1.0, gl));   // Train
-  
-  // Last 4 objects are static
-  staticObjects.push(createPlayer( 0.0,  -2.2,   -10.0,    0.0,   1.0, gl));   // Player
-  staticObjects.push(createGround( 0.0,  -4.0,   -5.0,    0.0,   1.0, gl));    // Ground
-  staticObjects.push(createWall  (-12.0,  -3.0,   -5.0,    0.0,   1.0, gl));    // Left Wall 1
-  staticObjects.push(createWall  (-12.0,  -3.0,  -30.0,    0.0,   1.0, gl));    // Left Wall 2
-  staticObjects.push(createWall  (-12.0,  -3.0,  -55.0,    0.0,   1.0, gl));    // Left Wall 2
-  staticObjects.push(createWall  (-12.0,  -3.0,  -80.0,    0.0,   1.0, gl));    // Left Wall 2
-  staticObjects.push(createWall  ( 12.0,  -3.0,   -5.0,    0.0,   1.0, gl));    // Right Wall
-  staticObjects.push(createWall  ( 12.0,  -3.0,  -30.0,    0.0,   1.0, gl));    // Left Wall 2
-  staticObjects.push(createWall  ( 12.0,  -3.0,  -55.0,    0.0,   1.0, gl));    // Left Wall 2
-  staticObjects.push(createWall  ( 12.0,  -3.0,  -80.0,    0.0,   1.0, gl));    // Left Wall 2
-  staticObjects.push(createTrack ( L_TRACK,  -3.0,   -5.0,    0.0,   1.0, gl));    // Left Track
-  staticObjects.push(createTrack ( M_TRACK,  -3.0,   -5.0,    0.0,   1.0, gl));    // Middle Track
-  staticObjects.push(createTrack ( R_TRACK,  -3.0,   -5.0,    0.0,   1.0, gl));    // Right Track
+  var dynamicObjects = createDynamic(gl);
+  var staticObjects = createStatic(gl);
 
   var dynamicBuffers = [];
   var staticBuffers = [];
@@ -143,7 +119,8 @@ function main() {
 
     if(!PAUSE && GAME)
     {  
-      gl.clearColor(0.9, 0.7, 0.3, 0.7); // Clear to black, fully opaque
+      // gl.clearColor(0.9, 0.7, 0.3, 0.7); // Clear to black, fully opaque
+      gl.clearColor(0.76, 0.99, 1.0, 1.0); // Clear to black, fully opaque
       gl.clearDepth(1.0); // Clear everything
       gl.enable(gl.DEPTH_TEST); // Enable depth testing
       gl.depthFunc(gl.LEQUAL); // Near things obscure far things
@@ -188,12 +165,33 @@ function main() {
         }
         // Decide distance of each level
         
-        if(dynamicObjects[i].translation[2] > 30.0)
+        if (dynamicObjects[i].translation[2] > 32.0)
         {
-          dynamicObjects.splice(i, 1);
-          dynamicBuffers.splice(i, 1);
-          i--;
-          continue;
+          if(DESTRUCTIBLE[dynamicObjects[i].type])
+          {
+            dynamicObjects.splice(i, 1);
+            dynamicBuffers.splice(i, 1);
+            i--;
+            continue;
+          }
+          else
+          {
+            switch(dynamicObjects[i].type)
+            {
+              case "TRACK":
+                dynamicObjects[i].translation[2] -= 16 * 9; 
+                break;
+              case 'GROUND':
+                if(dynamicObjects[i].translation[2] > 96.0)
+                {
+                  dynamicObjects[i].translation[2] -= 100 * 2; 
+                }
+                break;
+              case 'WALL':
+                dynamicObjects[i].translation[2] -= 25 * 12; 
+                break;
+            }
+          }
         }
 
         drawScene(gl, programInfo, dynamicBuffers[i], deltaTime, dynamicObjects[i], projectionMatrix);

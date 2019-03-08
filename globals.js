@@ -21,9 +21,23 @@ const IN_AIR = 1;
 const MUSIC = './music.mp3';
 
 // Textures
-const TEXTURE_TRACK = './track.jpg';
-const TEXTURE_WALL = './wall.png';
-const TEXTURE_PLAIN = './plain.jpg';
+const TEXTURE_TRACK     = './texture/track.jpg';
+const TEXTURE_WALL      = './texture/wall.png';
+const TEXTURE_PLAIN     = './texture/plain.jpeg';
+const TEXTURE_GRASS     = './texture/gravel.jpg';
+const TEXTURE_BARRICADE = './texture/barricade.png';
+
+// Logic
+const TYPES = ['CUBE', 'GRUOND', 'TRACK', 'WALL', 'PLAYER', 'BARRICADE', 'TRAIN'];
+const DESTRUCTIBLE = {
+    'CUBE'      : true,
+    'GROUND'    : false,
+    'TRACK'     : false,
+    'WALL'      : false,
+    'PLAYER'    : false,
+    'BARRICADE' : true,
+    'TRAIN'     : true,
+};
 
 /**********************
     GLOBAL VARIABLES
@@ -41,3 +55,4 @@ var gravity = true;
 var player_position = ON_GROUND;
 var base = PLAYER_GROUND;
 var jump = 1;
+var coins = 0;
