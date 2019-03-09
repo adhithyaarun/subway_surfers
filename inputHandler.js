@@ -20,6 +20,41 @@ $(document).keydown((event) => {
     }
 });
 
+Mousetrap.bind('g', () => {
+    grayscale = !grayscale;
+});
+
+Mousetrap.bind('f', () => {
+    flash = true;
+    setTimeout(() => {
+        flash = false;
+        setTimeout(() => {
+            flash = true;
+            setTimeout(() => {
+                flash = false;
+                setTimeout(() => {
+                    flash = true;
+                    setTimeout(() => {
+                        flash = false;
+                        setTimeout(() => {
+                            flash = true;
+                            setTimeout(() => {
+                                flash = false;
+                                setTimeout(() => {
+                                    flash = true;
+                                    setTimeout(() => {
+                                        flash = false;
+                                    }, 500);
+                                }, 500);
+                            }, 500);
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, 500);
+        }, 500);
+    }, 500);
+});
+
 Mousetrap.bind('p', () => {
     PAUSE = !PAUSE;
 });

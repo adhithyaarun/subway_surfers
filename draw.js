@@ -10,8 +10,18 @@ function drawScene(gl, programInfo, buffer, deltaTime, object, projectionMatrix)
 
     mat4.rotate(modelViewMatrix,        // destination matrix
                 modelViewMatrix,        // matrix to rotate
-                object.rotation,
-                [1.0, 1.0, 1.0]);
+                object.rotation[0],
+                [1.0, 0.0, 0.0]);
+
+    mat4.rotate(modelViewMatrix,        // destination matrix
+                modelViewMatrix,        // matrix to rotate
+                object.rotation[1],
+                [0.0, 1.0, 0.0]);
+
+    mat4.rotate(modelViewMatrix,        // destination matrix
+                modelViewMatrix,        // matrix to rotate
+                object.rotation[2],
+                [0.0, 0.0, 1.0]);
 
     const normalMatrix = mat4.create();
     mat4.invert(normalMatrix, modelViewMatrix);
@@ -89,9 +99,14 @@ function drawScene(gl, programInfo, buffer, deltaTime, object, projectionMatrix)
         false,
         normalMatrix);
 
+    // Texture
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, object.texture);
     gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+    
+    // Lighting
+    gl.uniform1i(programInfo.uniformLocations.flash, flash);
+    gl.uniform1i(programInfo.uniformLocations.grayscale, grayscale);
 
     {
         const vertexCount = object.indices.length;

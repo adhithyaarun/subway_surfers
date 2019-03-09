@@ -24,11 +24,15 @@ const MUSIC = './music.mp3';
 const TEXTURE_TRACK     = './texture/track.jpg';
 const TEXTURE_WALL      = './texture/wall.png';
 const TEXTURE_PLAIN     = './texture/plain.jpeg';
-const TEXTURE_GRASS     = './texture/gravel.jpg';
+const TEXTURE_GRAVEL     = './texture/gravel.jpg';
 const TEXTURE_BARRICADE = './texture/barricade.png';
+const TEXTURE_MYSTERY   = './texture/mystery.jpg';
+const TEXTURE_TRAIN     = './texture/train.jpg';
+const TEXTURE_COIN     = './texture/coin.png';
 
-// Logic
-const TYPES = ['CUBE', 'GRUOND', 'TRACK', 'WALL', 'PLAYER', 'BARRICADE', 'TRAIN'];
+
+// Logic                            
+const TYPES = ['CUBE', 'GRUOND', 'TRACK', 'WALL', 'PLAYER', 'BARRICADE', 'TRAIN', 'COIN'];
 const DESTRUCTIBLE = {
     'CUBE'      : true,
     'GROUND'    : false,
@@ -37,7 +41,9 @@ const DESTRUCTIBLE = {
     'PLAYER'    : false,
     'BARRICADE' : true,
     'TRAIN'     : true,
+    'COIN'      : true,
 };
+
 
 /**********************
     GLOBAL VARIABLES
@@ -48,6 +54,9 @@ var GAME = true;
 
 // Game experience
 var audio = new Audio(MUSIC);
+var staticObjects = null;
+var dynamicObjects = null;
+var start = -10.0;
 var direction = [false, false, false, false]; // [left, up, down, right]
 var distance = 0.0;
 var speed = MIN_SPEED;
@@ -56,3 +65,25 @@ var player_position = ON_GROUND;
 var base = PLAYER_GROUND;
 var jump = 1;
 var coins = 0;
+
+// Lighting
+var flash = false;
+var grayscale = false;
+
+// Random integer generator
+function getRandomInt(min, max) 
+{
+    var Min = Math.ceil(min);
+    var Max = Math.floor(max);
+    var Random = Math.floor(Math.random() * (Max - Min + 1)) + Min;
+    console.log(Random);
+    return Random;
+}
+
+// Sleep
+function sleep(miliseconds) {
+    var currentTime = new Date().getTime();
+    while (currentTime + miliseconds >= new Date().getTime()) {
+        ;
+    }
+}

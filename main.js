@@ -1,4 +1,5 @@
 main();
+// For music
 setInterval(() => {
   if(!PAUSE && GAME) {
     audio.play();
@@ -8,12 +9,41 @@ setInterval(() => {
   }
 }, 10);
 
-// Start here
+setInterval(() => {
+  flash = true;
+    setTimeout(() => {
+        flash = false;
+        setTimeout(() => {
+            flash = true;
+            setTimeout(() => {
+                flash = false;
+                setTimeout(() => {
+                    flash = true;
+                    setTimeout(() => {
+                        flash = false;
+                        setTimeout(() => {
+                            flash = true;
+                            setTimeout(() => {
+                                flash = false;
+                                setTimeout(() => {
+                                    flash = true;
+                                    setTimeout(() => {
+                                        flash = false;
+                                    }, 500);
+                                }, 500);
+                            }, 500);
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, 500);
+        }, 500);
+    }, 500);
+}, 30000);
+
 function main() {
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
 
-  // If we don't have a GL context, give up now
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
     return;
@@ -28,6 +58,7 @@ function main() {
     uniform mat4 uNormalMatrix;
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
+    uniform bool flash;
 
     varying highp vec2 vTextureCoord;
     varying highp vec3 vLighting;
@@ -37,10 +68,16 @@ function main() {
       vTextureCoord = aTextureCoord;
 
       highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
+      
       // highp vec3 directionalLightColor = vec3(1.0, 1.0, 1.0);
       highp vec3 directionalLightColor = vec3(1.0, 0.95, 0.82);
+      
       // highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
       highp vec3 directionalVector = vec3(0.25, 0.8, 0.75);
+      
+      if(flash) {
+        directionalLightColor = vec3(1.7, 1.7, 1.7);
+      }
 
       highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
 
@@ -51,26 +88,40 @@ function main() {
 
   // Fragment shader program
  const fsSource = `
+    precision mediump float;  
     varying highp vec2 vTextureCoord;
     varying highp vec3 vLighting;
 
     uniform sampler2D uSampler;
+    uniform float now;
+    uniform bool grayscale;
+
+    vec4 convertToGrayscale(in vec4 color) {
+      float mean = (color.r + color.g + color.b) / 3.0;
+      return vec4(mean, mean, mean, 1.0);
+    }
+
+    vec4 convertToColor(in vec4 gray, in vec4 color) {
+      return (gray * color);
+    }
 
     void main(void) {
       highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
 
-      gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+      if(grayscale) 
+      {
+        gl_FragColor = convertToGrayscale(vec4(texelColor.rgb * vLighting, texelColor.a));
+      }
+      else
+      {
+        gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+      }
+
     }
   `;
 
-  // Initialize a shader program; this is where all the lighting
-  // for the vertices and so forth is established.
   const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
-  // Collect all the info needed to use the shader program.
-  // Look up which attributes our shader program is using
-  // for aVertexPosition, aVevrtexColor and also
-  // look up uniform locations.
   const programInfo = {
     program: shaderProgram,
     attribLocations: {
@@ -83,13 +134,13 @@ function main() {
       modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
       normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
       uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
+      grayscale: gl.getUniformLocation(shaderProgram, 'grayscale'),
+      flash: gl.getUniformLocation(shaderProgram, 'flash'),
     },
   };
 
-  // Here's where we call the routine that builds all the
-  // objects we'll be drawing.
-  var dynamicObjects = createDynamic(gl);
-  var staticObjects = createStatic(gl);
+  dynamicObjects = createDynamic(gl);
+  staticObjects = createStatic(gl);
 
   var dynamicBuffers = [];
   var staticBuffers = [];
@@ -106,7 +157,6 @@ function main() {
 
   var then = 0;
 
-  // Draw the scene repeatedly
   function render(now) {
     now *= 0.001;  // convert to seconds
     const deltaTime = now - then;
@@ -120,29 +170,22 @@ function main() {
     if(!PAUSE && GAME)
     {  
       // gl.clearColor(0.9, 0.7, 0.3, 0.7); // Clear to black, fully opaque
-      gl.clearColor(0.76, 0.99, 1.0, 1.0); // Clear to black, fully opaque
-      gl.clearDepth(1.0); // Clear everything
-      gl.enable(gl.DEPTH_TEST); // Enable depth testing
-      gl.depthFunc(gl.LEQUAL); // Near things obscure far things
+      gl.clearColor(0.76, 0.99, 1.0, 1.0);  // Clear to sky colour
+      gl.clearDepth(1.0);                   // Clear everything
+      gl.enable(gl.DEPTH_TEST);             // Enable depth testing
+      gl.depthFunc(gl.LEQUAL);              // Near things obscure far things
 
       // Clear the canvas before we start drawing on it.
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 
-      // Create a perspective matrix, a special matrix that is
-      // used to simulate the distortion of perspective in a camera.
-      // Our field of view is 45 degrees, with a width/height
-      // ratio that matches the display size of the canvas
-      // and we only want to see objects between 0.1 units
-      // and 100 units away from the camera.
-      const fieldOfView = 45 * Math.PI / 180; // in radians
+      // Perspective matrix
+      const fieldOfView = 45 * Math.PI / 180;                         // Radians
       const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
       const zNear = 0.1;
       const zFar = 100.0;
       const projectionMatrix = mat4.create();
 
-      // note: glmatrix.js always has the first argument
-      // as the destination to receive the result.
       mat4.perspective(projectionMatrix,
         fieldOfView,
         aspect,
@@ -158,12 +201,10 @@ function main() {
         {
           dynamicObjects[i].translation[2] += (2 * speed);
         }
-        
-        if(distance % 120 == 0)
+        if(Math.floor(distance) % 12000 == 0 && distance > 12000 && speed < 0.45)
         {
-          speed += 0.02;
+          speed += 0.01;
         }
-        // Decide distance of each level
         
         if (dynamicObjects[i].translation[2] > 32.0)
         {
@@ -192,6 +233,11 @@ function main() {
                 break;
             }
           }
+        }
+
+        if(dynamicObjects[i].type === 'COIN')
+        {
+          dynamicObjects[i].rotation[1] += 0.05;
         }
 
         drawScene(gl, programInfo, dynamicBuffers[i], deltaTime, dynamicObjects[i], projectionMatrix);
@@ -272,6 +318,10 @@ function main() {
 
       for(i in staticObjects)
       {
+        if(staticObjects[i].type == 'POLICE' && distance > 350.0 && staticObjects[i].translation[2] < 3.0)
+        {
+          staticObjects[i].translation[2] += 0.05;
+        }
         drawScene(gl, programInfo, staticBuffers[i], deltaTime, staticObjects[i], projectionMatrix);
       }
     }
