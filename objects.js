@@ -714,15 +714,15 @@ function createPolice(x, y, z, r, s, gl) {
             0.0, 1.0,
 
             // Right
-            0.0, 0.0,
-            1.0, 0.0,
             1.0, 1.0,
+            1.0, 0.0,
+            0.0, 0.0,
             0.0, 1.0,
 
             // Left
-            0.0, 0.0,
-            1.0, 0.0,
             1.0, 1.0,
+            1.0, 0.0,
+            0.0, 0.0,
             0.0, 1.0,
 
             // Top
@@ -1040,7 +1040,7 @@ function createTrain(x, y, z, r, s, gl) {
     return train;
 }
 
-function createCoin(x, y, z, r, s, gl, jetpack) {
+function createCoin(x, y, z, r, s, gl, jetpack, train) {
     let coin = {
         positions: [
             // Front face
@@ -1166,6 +1166,7 @@ function createCoin(x, y, z, r, s, gl, jetpack) {
         ],
         type: 'COIN',
         jetpack: jetpack,
+        train: train,
     };
 
     return coin;
@@ -1607,10 +1608,15 @@ function createDynamic(gl) {
     
     // Train
     dynamicObjects.push(createTrain (R_TRACK,-1.8, -160.0,    [0.0, 0.0, 0.0],   1.0, gl));
+    coinsForTrain(gl, dynamicObjects.length - 1);
     dynamicObjects.push(createTrain (L_TRACK,-1.8, -210.0,    [0.0, 0.0, 0.0],   1.0, gl));
+    coinsForTrain(gl, dynamicObjects.length - 1);
     dynamicObjects.push(createTrain (M_TRACK,-1.8, -260.0,    [0.0, 0.0, 0.0],   1.0, gl));
+    coinsForTrain(gl, dynamicObjects.length - 1);
     dynamicObjects.push(createTrain (R_TRACK,-1.8, -310.0,    [0.0, 0.0, 0.0],   1.0, gl));
+    coinsForTrain(gl, dynamicObjects.length - 1);
     dynamicObjects.push(createTrain (L_TRACK,-1.8, -370.0,    [0.0, 0.0, 0.0],   1.0, gl));
+    coinsForTrain(gl, dynamicObjects.length - 1);
 
     // Track
     dynamicObjects.push(createTrack ( L_TRACK,  -3.0,    -5.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 1
@@ -1667,7 +1673,8 @@ function createDynamic(gl) {
     dynamicObjects.push(createWall  (-11.5,  -3.0, -280.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 12
     dynamicObjects.push(createWall  ( 11.5,  -3.0, -280.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 12
     
-    // Jumping boots and jetpacks
+    // Jumping boots, Magnets and Jetpacks
+    dynamicObjects.push(createMagnet (-3.0 * getRandomInt(-1, 1),  -2.0, (getRandomInt(25, 80)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
     dynamicObjects.push(createBoot   (-3.0 * getRandomInt(-1, 1),  -2.0, (getRandomInt(185, 285)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
     dynamicObjects.push(createJetpack(-3.0 * getRandomInt(-1, 1),  -2.0, (getRandomInt(550, 640)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
     var jetpacks = 1;
@@ -1696,9 +1703,15 @@ function createDynamic(gl) {
             magnets += 1;
         }
     }
-
-    // Magnet
-    dynamicObjects.push(createMagnet(M_TRACK, -2.0, -25.0, [0.0, 0.0, 0.0], 0.3, gl));
+    
+    var coins_dist = dynamicObjects[dynamicObjects.length - 1].translation[2] - 50.0;
+    while(Math.abs(coins_dist - 3.0) < (WIN_LENGTH - 10.0))
+    {
+        dynamicObjects.push(createCoin(L_TRACK, -2.0, coins_dist, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+        dynamicObjects.push(createCoin(M_TRACK, -2.0, coins_dist, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+        dynamicObjects.push(createCoin(R_TRACK, -2.0, coins_dist, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+        coins_dist -= 3.0;
+    }
 
     // Ground
     dynamicObjects.push(createGround(0.0, -4.0,  -5.0, [0.0, 0.0, 0.0], 1.0, gl)); 
@@ -1716,15 +1729,33 @@ function coinsForBarricade(gl, n) {
     {
         if(i < 4)
         {
-            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -2.0, dynamicObjects[n].translation[2] + ((4-i) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false));
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -2.0, dynamicObjects[n].translation[2] + ((4-i) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
         }
         else if(i == 4)
         {
-            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -1.0, dynamicObjects[n].translation[2], [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false));
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -1.0, dynamicObjects[n].translation[2], [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
         }
         else
         {                                                                                   
-            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -2.0, dynamicObjects[n].translation[2] - ((i-4) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false));
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -2.0, dynamicObjects[n].translation[2] - ((i-4) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+        }
+    }
+}
+
+function coinsForTrain(gl, n) {
+    for(var i=0; i<9; ++i)
+    {
+        if(i < 4)
+        {
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], 0.4, dynamicObjects[n].translation[2] + ((4-i) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
+        }
+        else if(i == 4)
+        {
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], 0.4, dynamicObjects[n].translation[2], [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
+        }
+        else
+        {                                                                                   
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], 0.4, dynamicObjects[n].translation[2] - ((i-4) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
         }
     }
 }
@@ -1758,9 +1789,9 @@ function detectCollisionCollectible(i, gl) {
             jetpack_flag = true;
             jump = 0.0;
             var prev_position = staticObjects[0].translation[2] - 30.0;
-            for(let i=0; i<110; ++i)
+            for(let i=0; i<102; ++i)
             {
-                dynamicObjects.splice(dynamicObjects.length - 2, 0, createCoin(getRandomInt(-1, 1) * 3.0, -2.0, prev_position - 3.0, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, true));
+                dynamicObjects.splice(dynamicObjects.length - 2, 0, createCoin(getRandomInt(-1, 1) * 3.0, -2.0, prev_position - 3.0, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, true, false));
                 dynamicBuffers.splice(dynamicBuffers.length - 2, 0, initBuffers(gl, dynamicObjects[dynamicObjects.length - 3]));
                 prev_position -= 3.0;
             }
@@ -1802,9 +1833,9 @@ function detectCollisionCollectible(i, gl) {
                 jetpack_flag = true;
                 jump = 0.0;
                 var prev_position = staticObjects[0].translation[2] - 30.0;
-                for(let i=0; i<110; ++i)
+                for(let i=0; i<102; ++i)
                 {
-                    dynamicObjects.splice(dynamicObjects.length - 3, 1, createCoin(getRandomInt(-1, 1) * 3.0, -2.0, prev_position - 3.0, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, true));
+                    dynamicObjects.splice(dynamicObjects.length - 3, 1, createCoin(getRandomInt(-1, 1) * 3.0, -2.0, prev_position - 3.0, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, true, false));
                     prev_position -= 3.0;
                 }
 
@@ -1840,7 +1871,7 @@ function detectDeadlyCollision(i, gl) {
             }
             break;
         case 'TRAIN':
-            if(distance <= 15.4 && surfer[0] == danger[0])
+            if(distance <= 15.4 && surfer[0] == danger[0] && surfer[1] < (danger[1] + 1.6))
             {
                 speed = 0.0;
                 jump = 0.0;
@@ -1861,11 +1892,27 @@ function checkDeadlyCollision(surfer) {
             }
             break;
             case 'TRAIN':
-            if (distance <= 15.4 && surfer[0] == danger[0]) {
+            if (distance <= 15.4 && surfer[0] == danger[0] && surfer[1] < (danger[1] + 1.6)) {
                 return true;
             }
             break;
         }
     }
     return false;
+}
+
+function checkTrainBelowMe(surfer)
+{
+    base = PLAYER_GROUND;
+    for(i in dynamicObjects)
+    {
+        if(dynamicObjects[i].type == 'TRAIN')
+        {
+            let distance = Math.sqrt(Math.pow(surfer[0] - dynamicObjects[i].translation[0], 2) + Math.pow(surfer[1] - dynamicObjects[i].translation[1], 2) + Math.pow(surfer[2] - dynamicObjects[i].translation[2], 2));
+            if(distance < 15.4 && !jetpack_flag && surfer[0] == dynamicObjects[i].translation[0] && surfer[1] >= (dynamicObjects[i].translation[1] + 1.6))
+            {
+                base = dynamicObjects[i].translation[1] + 1.9;
+            }
+        }
+    }
 }

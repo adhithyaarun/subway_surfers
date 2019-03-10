@@ -153,6 +153,7 @@ function main() {
   }
 
   var then = 0;
+  actual_distance = 10.0;
 
   function render(now) {
     now *= 0.001;  // convert to seconds
@@ -165,7 +166,11 @@ function main() {
     }
 
     if(!PAUSE && GAME)
-    {  
+    {
+      if(actual_distance >= WIN_LENGTH)
+      {
+        GAME = false;
+      }  
       // gl.clearColor(0.9, 0.7, 0.3, 0.7); // Clear to black, fully opaque
       gl.clearColor(0.76, 0.99, 1.0, 1.0);  // Clear to sky colour
       gl.clearDepth(1.0);                   // Clear everything
@@ -189,13 +194,13 @@ function main() {
         zNear,
         zFar);
       
+      actual_distance += speed;
       for(i in dynamicObjects)
       {
         dynamicObjects[i].translation[2] += speed;
         distance += speed;
-        actual_distance += speed;
         // Speed up train
-        if (dynamicObjects[i].type === 'TRAIN')
+        if (dynamicObjects[i].type === 'TRAIN' || (dynamicObjects[i].type === 'COIN' && dynamicObjects[i].train))
         {
           dynamicObjects[i].translation[2] += (2 * speed);
         }
@@ -230,6 +235,9 @@ function main() {
                 break;
               case 'WALL':
                 dynamicObjects[i].translation[2] -= 25 * 12; 
+                break;
+              case 'TRAIN':
+                dynamicObjects[i].translation[2] -= 350; 
                 break;
             }
           }
@@ -297,10 +305,18 @@ function main() {
                 staticObjects[0].translation[0] = M_TRACK;
                 speed = MIN_SPEED;
                 distance = 0.0;
-                danger_flag = true;
-                setTimeout(() => {
-                  danger_flag = false;
-                }, 10000);
+                if(danger_flag)
+                {
+                  speed = 0.0;
+                  jump = 0.0;
+                }
+                else
+                {
+                  danger_flag = true;
+                  setTimeout(() => {
+                    danger_flag = false;
+                  }, 10000);
+                }
               }
               direction[0] = false;
               break;
@@ -311,10 +327,18 @@ function main() {
                 staticObjects[0].translation[0] = R_TRACK;
                 speed = MIN_SPEED;
                 distance = 0.0;
-                danger_flag = true;
-                setTimeout(() => {
-                  danger_flag = false;
-                }, 10000);
+                if(danger_flag)
+                {
+                  speed = 0.0;
+                  jump = 0.0;
+                }
+                else
+                {
+                  danger_flag = true;
+                  setTimeout(() => {
+                    danger_flag = false;
+                  }, 10000);
+                }
               }
               direction[0] = false;
               break;
@@ -335,10 +359,18 @@ function main() {
                 staticObjects[0].translation[0] = M_TRACK;
                 speed = MIN_SPEED;
                 distance = 0.0;
-                danger_flag = true;
-                setTimeout(() => {
-                  danger_flag = false;
-                }, 10000);
+                if(danger_flag)
+                {
+                  speed = 0.0;
+                  jump = 0.0;
+                }
+                else
+                {
+                  danger_flag = true;
+                  setTimeout(() => {
+                    danger_flag = false;
+                  }, 10000);
+                }
               }
               direction[3] = false;
               break;
@@ -349,10 +381,17 @@ function main() {
                 staticObjects[0].translation[0] = L_TRACK;
                 speed = MIN_SPEED;
                 distance = 0.0;
-                danger_flag = true;
-                setTimeout(() => {
-                  danger_flag = false;
-                }, 10000);
+                if (danger_flag) {
+                  speed = 0.0;
+                  jump = 0.0;
+                }
+                else
+                {
+                  danger_flag = true;
+                  setTimeout(() => {
+                    danger_flag = false;
+                  }, 10000);
+                }
               }
               direction[3] = false;
               break;
@@ -378,9 +417,12 @@ function main() {
 
       if(gravity)
       {
-        if(staticObjects[0].translation[1] > PLAYER_GROUND)
+        checkTrainBelowMe(staticObjects[0].translation);
+        if(staticObjects[0].translation[1] > base)
         {
           staticObjects[0].translation[1] -= 0.1;
+          console.log(staticObjects[0].translation[1]);
+          checkTrainBelowMe(staticObjects[0].translation);
         }
         else
         {
@@ -411,9 +453,6 @@ function main() {
           else
           {
             GAME = false;
-            // console.log(`Coins: ${coins}`);
-            // console.log(`Distance: ${distance}`);
-            // console.log("GAME OVER");
           }
         }
         else if(!danger_flag && staticObjects[i].type == 'POLICE' && distance > 550.0 && staticObjects[i].translation[2] < 3.0)

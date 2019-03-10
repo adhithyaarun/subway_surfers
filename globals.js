@@ -18,6 +18,7 @@ const PLAYER_GROUND = -2.2;
 const ON_GROUND = 0;
 const IN_AIR = 1;
 const GROUND_LEVEL = -4.0;
+const TRACK_LEVEL = -3.0;
 
 // Music
 const MUSIC = './music.mp3';
@@ -52,6 +53,7 @@ const DESTRUCTIBLE = {
     'JETPACK'   : true,
     'MAGNET'    : true,
 };
+const WIN_LENGTH = 6350.0;
 
 
 /**********************
@@ -64,26 +66,34 @@ var GAME = true;
 // Game experience
 var audio = new Audio(MUSIC);
 
+// Objects
 var staticObjects = [];
 var dynamicObjects = [];
 var dynamicBuffers = [];
 var staticBuffers = [];
 
+// Metrics and Flags
 var start = -10.0;
 var direction = [false, false, false, false]; // [left, up, down, right]
 var distance = 0.0;
 var actual_distance = 0.0;
+
+// Movement
 var speed = MIN_SPEED;
 var gravity = true;
 var player_position = ON_GROUND;
 var base = PLAYER_GROUND;
+
+// Danger
+var danger_flag = false;
+
+// Powerup settings
 var jump = 1.0;
 var keep_jump = false;
 var coins = 0;
 var jetpack_flag = false;
 var pushDown = 8.0;
 var magnet_flag = false;
-var danger_flag = false;
 
 // Lighting
 var flash = false;

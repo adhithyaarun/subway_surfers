@@ -1,6 +1,6 @@
 // Draw the scene.
 function drawScene(gl, programInfo, buffer, deltaTime, object, projectionMatrix) {
-    // webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+    webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
     const modelViewMatrix = mat4.create();
 
