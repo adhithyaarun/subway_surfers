@@ -39,9 +39,11 @@ const TEXTURE_POLICE    = './texture/police.jpg';
 const TEXTURE_PLAYER    = './texture/player.jpeg';
 const TEXTURE_BANANA    = './texture/banana.jpeg';
 const TEXTURE_OIL       = './texture/oil.png';
+const TEXTURE_CITY      = './texture/city.jpg';
 
 // Logic                            
-const TYPES = ['CUBE', 'GRUOND', 'TRACK', 'WALL', 'PLAYER', 'BARRICADE', 'TRAIN', 'COIN', 'BOOT', 'JETPACK', 'MAGNET', 'OIL', 'BANANA'];
+const WIN_LENGTH = 6350.0;
+const TYPES = ['CUBE', 'GRUOND', 'TRACK', 'WALL', 'PLAYER', 'BARRICADE', 'TRAIN', 'COIN', 'BOOT', 'JETPACK', 'MAGNET', 'OIL', 'BANANA', 'CITY'];
 const DESTRUCTIBLE = {
     'CUBE'      : true,
     'GROUND'    : false,
@@ -50,14 +52,14 @@ const DESTRUCTIBLE = {
     'PLAYER'    : false,
     'BARRICADE' : true,
     'TRAIN'     : true,
-    'COIN'      : true,
+    'COIN'      : false,
     'BOOT'      : true,
     'JETPACK'   : true,
     'MAGNET'    : true,
     'OIL'       : true,
     'BANANA'    : true,
+    'CITY'      : false,
 };
-const WIN_LENGTH = 6350.0;
 
 
 /**********************
@@ -66,6 +68,7 @@ const WIN_LENGTH = 6350.0;
 // Game status
 var PAUSE = false;
 var GAME = true;
+var WIN = false;
 
 // Game experience
 var audio = new Audio(MUSIC);
@@ -118,4 +121,9 @@ function sleep(miliseconds) {
     while (currentTime + miliseconds >= new Date().getTime()) {
         ;
     }
+}
+
+// Display Message
+function displayMessage(prompt) {
+  $('#message').html(String(prompt));
 }

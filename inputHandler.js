@@ -57,8 +57,10 @@ Mousetrap.bind('f', () => {
 
 Mousetrap.bind('p', () => {
     PAUSE = !PAUSE;
+    displayMessage('GAME PAUSED');
 });
 
 Mousetrap.bind('q', () => {
     GAME = false;
+    displayMessage('YOU QUIT');
 });

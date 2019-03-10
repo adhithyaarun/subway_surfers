@@ -1822,49 +1822,146 @@ function createBanana(x, y, z, r, s, gl) {
     return banana;
 }
 
+function createCity(x, y, z, r, s, gl) {
+    let city = {
+        positions: [
+            // Front face
+            -100 * s, -80.0 * s, 1.0 * s,
+             100 * s, -80.0 * s, 1.0 * s,
+             100 * s,  80.0 * s, 1.0 * s,
+            -100 * s,  80.0 * s, 1.0 * s,
+
+            // Back face
+            -100 * s, -80.0 * s, -1.0 * s,
+             100 * s, -80.0 * s, -1.0 * s,
+             100 * s,  80.0 * s, -1.0 * s,
+            -100 * s,  80.0 * s, -1.0 * s,
+
+            // Right face
+             100 * s, -80.0 * s,  1.0 * s,
+             100 * s, -80.0 * s, -1.0 * s,
+             100 * s,  80.0 * s, -1.0 * s,
+             100 * s,  80.0 * s,  1.0 * s,
+
+            // Left face
+            -100 * s, -80.0 * s,  1.0 * s,
+            -100 * s, -80.0 * s, -1.0 * s,
+            -100 * s,  80.0 * s, -1.0 * s,
+            -100 * s,  80.0 * s,  1.0 * s,
+
+            // Top face
+            -100 * s,  80.0 * s,  1.0 * s,
+             100 * s,  80.0 * s,  1.0 * s,
+             100 * s,  80.0 * s, -1.0 * s,
+            -100 * s,  80.0 * s, -1.0 * s,
+
+            // Bottom face
+            -100 * s, -80.0 * s,  1.0 * s,
+             100 * s, -80.0 * s,  1.0 * s,
+             100 * s, -80.0 * s, -1.0 * s,
+            -100 * s, -80.0 * s, -1.0 * s,
+        ],
+        indices: [
+             0,  1,  2,      0,  2,  3, // front
+             4,  5,  6,      4,  6,  7, // back
+             8, 11, 10,      8,  9, 10, // right
+            12, 15, 14,     12, 13, 14, // left
+            17, 16, 18,     16, 18, 19, // top
+            20, 21, 23,     21, 23, 22, // bottom
+        ],
+        translation: [x, y, z],
+        rotation: r,
+        texture: loadTexture(gl, TEXTURE_CITY),
+        textureCoordinates: [
+            // Front
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            
+            // Back
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            
+            // Right
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            
+            // Left
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+        ],
+        vertexNormals: [
+            // Front
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+
+            // Back
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+
+            // Right
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+
+            // Left
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+
+            // Top
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+
+            // Bottom
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+        ],
+        type: 'CITY',
+    };
+
+    return city;
+}
+
 // Initiation methods
 function createDynamic(gl) {
-    // Cubes
-    dynamicObjects.push(createCube  ( 2.0,   0.0,   -6.0,  [ 10.0,  10.0,  10.0],   0.7, gl));
-    dynamicObjects.push(createCube  (-2.0,   0.0,   -6.0,  [-10.0, -10.0, -10.0],   0.5, gl));
-    dynamicObjects.push(createCube  ( 2.0,   0.0,  -16.0,  [ 10.0,  10.0,  10.0],   0.7, gl));
-    dynamicObjects.push(createCube  (-2.0,   0.0,  -16.0,  [-10.0, -10.0, -10.0],   0.5, gl));
-    dynamicObjects.push(createCube  ( 2.0,   0.0,  -26.0,  [ 10.0,  10.0,  10.0],   0.7, gl));
-    dynamicObjects.push(createCube  (-2.0,   0.0,  -26.0,  [-10.0, -10.0, -10.0],   0.5, gl));
-
+    var last = -20.0;
     // Barricade & Coins
-    dynamicObjects.push(createBar (L_TRACK, -2.5, -40.0, [0.0, 0.0, 0.0], 1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar (M_TRACK, -2.5, -60.0, [0.0, 0.0, 0.0], 1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (R_TRACK,-2.5,  -80.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (M_TRACK,-2.5, -120.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (L_TRACK,-2.5, -140.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (M_TRACK,-2.5, -160.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (R_TRACK,-2.5, -180.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (M_TRACK,-2.5, -220.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (L_TRACK,-2.5, -240.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (M_TRACK,-2.5, -260.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (R_TRACK,-2.5, -280.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (M_TRACK,-2.5, -320.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (L_TRACK,-2.5, -340.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (M_TRACK,-2.5, -360.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (R_TRACK,-2.5, -380.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
-    dynamicObjects.push(createBar   (M_TRACK,-2.5, -400.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);  
+    for(let i=0; i<100; ++i)
+    {
+        last = last - getRandomInt(20, 50);
+        dynamicObjects.push(createBar (-3.0 * getRandomInt(-1, 1), -2.5, last, [0.0, 0.0, 0.0], 1.0, gl));
+        coinsForBarricade(gl, dynamicObjects.length - 1);      
+    }
     
     // Oil and Banana
     dynamicObjects.push(createOil   (-3.0 * getRandomInt(-1, 1), -2.2, -1.0 * getRandomInt(100, 200), [0.0, 0.0, 0.0], 1.0, gl));
@@ -1888,17 +1985,14 @@ function createDynamic(gl) {
         }
     }
     
+    last = -110.0;
     // Train
-    dynamicObjects.push(createTrain (R_TRACK,-1.8, -160.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForTrain(gl, dynamicObjects.length - 1);
-    dynamicObjects.push(createTrain (L_TRACK,-1.8, -210.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForTrain(gl, dynamicObjects.length - 1);
-    dynamicObjects.push(createTrain (M_TRACK,-1.8, -260.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForTrain(gl, dynamicObjects.length - 1);
-    dynamicObjects.push(createTrain (R_TRACK,-1.8, -310.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForTrain(gl, dynamicObjects.length - 1);
-    dynamicObjects.push(createTrain (L_TRACK,-1.8, -370.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForTrain(gl, dynamicObjects.length - 1);
+    for(let i=0; i<70; ++i)
+    {
+        last = last - getRandomInt(50, 80);
+        dynamicObjects.push(createTrain (R_TRACK,-1.8, last,    [0.0, 0.0, 0.0],   1.0, gl));
+        coinsForTrain(gl, dynamicObjects.length - 1);
+    }
 
     // Track
     dynamicObjects.push(createTrack ( L_TRACK,  -3.0,    -5.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 1
@@ -1986,6 +2080,7 @@ function createDynamic(gl) {
         }
     }
     
+    // Coin mania
     var coins_dist = dynamicObjects[dynamicObjects.length - 1].translation[2] - 50.0;
     while(Math.abs(coins_dist - 3.0) < (WIN_LENGTH - 10.0))
     {
@@ -1995,6 +2090,11 @@ function createDynamic(gl) {
         coins_dist -= 3.0;
     }
 
+    for(let i=0; i<100; ++i)
+    {
+        dynamicObjects.push(createCoin(-3.0 * getRandomInt(-1, 1), -2.0, getRandomInt(50, 5400), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+    }
+
     // Ground
     dynamicObjects.push(createGround(0.0, -4.0,  -5.0, [0.0, 0.0, 0.0], 1.0, gl)); 
     dynamicObjects.push(createGround(0.0, -4.0,-105.0, [0.0, 0.0, 0.0], 1.0, gl));
@@ -2002,7 +2102,8 @@ function createDynamic(gl) {
 
 function createStatic(gl) {
     staticObjects.push(createPlayer(0.0, -2.2, -10.0, [0.0, 0.0, 0.0], 1.0, gl)); // Player
-    staticObjects.push(createPolice(0.0, -2.0,  -6.0, [0.0, 0.0, 0.0], 1.0, gl)); // Player
+    staticObjects.push(createPolice(0.0, -2.0,  -6.0, [0.0, 0.0, 0.0], 1.0, gl)); // Police
+    staticObjects.push(createCity(0.0, 0.0,  -98.0, [0.0, 0.0, 0.0], 1.0, gl)); // Player
 }
 
 // Support methods 
@@ -2050,6 +2151,7 @@ function detectCollisionCollectible(i, gl) {
     {
         if(dynamicObjects[i].type === 'BOOT')
         {
+            displayMessage('SWEET! JUMPING BOOTS FOR YOU');
             jump = 2.0;
             setTimeout(() => {
                 if(!keep_jump)
@@ -2065,9 +2167,12 @@ function detectCollisionCollectible(i, gl) {
         else if (dynamicObjects[i].type === 'COIN')
         {
             coins += 1;
+            dynamicObjects.splice(i, 1, createCoin(-3.0 * getRandomInt(-1, 1), -2.0, getRandomInt(50, 5400), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+            dynamicBuffers.splice(i, 1, initBuffers(gl, dynamicObjects[i]));
         }
         else if (dynamicObjects[i].type === 'JETPACK')
         {
+            displayMessage('TAKING OFF! ADIOS!');
             jetpack_flag = true;
             jump = 0.0;
             var prev_position = staticObjects[0].translation[2] - 30.0;
@@ -2085,13 +2190,17 @@ function detectCollisionCollectible(i, gl) {
         }
         else if (dynamicObjects[i].type === 'MAGNET')
         {
+            displayMessage('GREAT! YOU GOT A MAGNET');
             magnet_flag = true;
             setTimeout(() => {
                 magnet_flag = false;
             }, 12000);
         }
-        dynamicObjects.splice(i, 1);
-        dynamicBuffers.splice(i, 1);
+        if (dynamicObjects[i].type != 'COIN')
+        {
+            dynamicObjects.splice(i, 1);
+            dynamicBuffers.splice(i, 1);
+        }
     }
     else if(jump > 1.0) 
     {
@@ -2101,9 +2210,12 @@ function detectCollisionCollectible(i, gl) {
             if (dynamicObjects[i].type === 'COIN')
             {
                 coins += 1;
+                dynamicObjects.splice(i, 1, createCoin(-3.0 * getRandomInt(-1, 1), -2.0, getRandomInt(50, 5400), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+                dynamicBuffers.splice(i, 1, initBuffers(gl, dynamicObjects[i]));
             }
             else if(dynamicObjects[i].type === 'BOOT')
             {
+                displayMessage('SWEET! MORE TIME TO JUMP AROUND');
                 jump = 2.0;
                 keep_jump = true;
                 setTimeout(() => {
@@ -2112,6 +2224,7 @@ function detectCollisionCollectible(i, gl) {
             }
             else if (dynamicObjects[i].type === 'JETPACK') 
             {
+                displayMessage('JETPACK!!!');
                 jetpack_flag = true;
                 jump = 0.0;
                 var prev_position = staticObjects[0].translation[2] - 30.0;
@@ -2128,13 +2241,17 @@ function detectCollisionCollectible(i, gl) {
             }
             else if (dynamicObjects[i].type === 'MAGNET')
             {
+                displayMessage('YAYYY! MAGNET!');
                 magnet_flag = true;
                 setTimeout(() => {
                     magnet_flag = false;
                 }, 12000);
             }
-            dynamicObjects.splice(i, 1);
-            dynamicBuffers.splice(i, 1);
+            if(dynamicObjects[i].type != 'COIN')
+            {
+                dynamicObjects.splice(i, 1);
+                dynamicBuffers.splice(i, 1);
+            }
         }
     }   
 }
@@ -2148,6 +2265,7 @@ function detectDeadlyCollision(i, gl) {
         case 'BARRICADE':
             if(distance <= 1.0 && surfer[0] == danger[0])
             {
+                displayMessage('OH NO! YOU CRASHED INTO A BARRICADE');
                 speed = 0.0;
                 jump = 0.0;
             }
@@ -2155,6 +2273,7 @@ function detectDeadlyCollision(i, gl) {
         case 'TRAIN':
             if(distance <= 15.4 && surfer[0] == danger[0] && surfer[1] < (danger[1] + 1.6))
             {
+                displayMessage('OH NO! YOU GOT HIT BY A TRAIN')
                 speed = 0.0;
                 jump = 0.0;
             }

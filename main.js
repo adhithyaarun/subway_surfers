@@ -10,6 +10,10 @@ setInterval(() => {
 }, 10);
 
 setInterval(() => {
+  if(GAME)
+  {
+    displayMessage('WOAH! LIGHTNING!');
+  }
   flash = true;
     setTimeout(() => {
         flash = false;
@@ -162,6 +166,14 @@ function main() {
 
     if (!GAME)
     {
+      if(WIN)
+      {
+        displayMessage(`YOU WIN! YOUR SCORE: ${coins}`);
+      }
+      else
+      {
+        displayMessage(`YOU LOSE! YOUR SCORE: ${coins}`);
+      }
       return 0;
     }
 
@@ -170,7 +182,9 @@ function main() {
       if(actual_distance >= WIN_LENGTH)
       {
         GAME = false;
-      }  
+        WIN = true;
+      }
+      $('#score').html(String(coins));  
       // gl.clearColor(0.9, 0.7, 0.3, 0.7); // Clear to black, fully opaque
       gl.clearColor(0.76, 0.99, 1.0, 1.0);  // Clear to sky colour
       gl.clearDepth(1.0);                   // Clear everything
@@ -217,7 +231,6 @@ function main() {
           {
             dynamicObjects.splice(i, 1);
             dynamicBuffers.splice(i, 1);
-            i--;
             continue;
           }
           else
@@ -236,8 +249,9 @@ function main() {
               case 'WALL':
                 dynamicObjects[i].translation[2] -= 25 * 12; 
                 break;
-              case 'TRAIN':
-                dynamicObjects[i].translation[2] -= 350; 
+              case 'COIN':
+                dynamicObjects.splice(i, 1, createCoin(-3.0 * getRandomInt(-1, 1), -2.0, getRandomInt(50, 5400), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+                dynamicBuffers.splice(i, 1, initBuffers(gl, dynamicObjects[i]));
                 break;
             }
           }
@@ -295,6 +309,7 @@ function main() {
             let dist = Math.sqrt(Math.pow(staticObjects[0].translation[0] - dynamicObjects[i].translation[0], 2) + Math.pow(staticObjects[0].translation[1] - dynamicObjects[i].translation[1], 2) + Math.pow(staticObjects[0].translation[2] - dynamicObjects[i].translation[2], 2));
             if(dist <= 0.65)
             {
+              displayMessage('YOU WERE SLOWED DOWN BY OIL OR BANANA PEEL. RUN FASTER!');
               speed = MIN_SPEED;
               distance = 0.0;
               if(danger_flag)
@@ -481,6 +496,7 @@ function main() {
           if(staticObjects[1].translation[2] >= -7.9)
           {
             staticObjects[1].translation[2] -= 0.5;
+            displayMessage('OH NO! YOU GOT CAUGHT');
           }
           else
           {

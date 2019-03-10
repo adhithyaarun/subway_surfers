@@ -4,14 +4,25 @@
     <meta charset="utf-8">
     <title>Subway Surfers</title>
     <link rel="stylesheet" href="./index.css" type="text/css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
 
   <body>
-    <!-- <canvas id="glcanvas" width="640" height="480"></canvas> -->
+    <div id="scoreboard" class="row text-center">
+      <div class="col-md-3">
+        <strong>Score:
+          <span id="score"></span>
+        </strong>
+      </div>
+      <div class="col-md-6">
+        <strong>
+          <span id="message"></span>
+        </strong>
+      </div>
+    </div>
     <canvas id="glcanvas" width="1340" height="650"></canvas>
   </body>
 
-  <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
   <script src="./jquery.js"></script>
   <script src="./mousetrap.js"></script>
   <script src="./gl-matrix.js"></script>
