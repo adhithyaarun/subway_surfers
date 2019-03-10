@@ -139,11 +139,8 @@ function main() {
     },
   };
 
-  dynamicObjects = createDynamic(gl);
-  staticObjects = createStatic(gl);
-
-  var dynamicBuffers = [];
-  var staticBuffers = [];
+  createDynamic(gl);
+  createStatic(gl);
 
   for(i in dynamicObjects)
   {
@@ -196,16 +193,19 @@ function main() {
       {
         dynamicObjects[i].translation[2] += speed;
         distance += speed;
-
+        actual_distance += speed;
+        // Speed up train
         if (dynamicObjects[i].type === 'TRAIN')
         {
           dynamicObjects[i].translation[2] += (2 * speed);
         }
+        // Accelerate
         if(Math.floor(distance) % 12000 == 0 && distance > 12000 && speed < 0.45)
         {
           speed += 0.01;
         }
         
+        // Handle objects out of scope of view
         if (dynamicObjects[i].translation[2] > 32.0)
         {
           if(DESTRUCTIBLE[dynamicObjects[i].type])
@@ -235,57 +235,141 @@ function main() {
           }
         }
 
-        if(dynamicObjects[i].type === 'COIN')
+        // Handle collisions
+        if(dynamicObjects[i].type === 'COIN' || dynamicObjects[i].type === 'BOOT' || dynamicObjects[i].type === 'JETPACK' || dynamicObjects[i].type === 'MAGNET')
         {
           dynamicObjects[i].rotation[1] += 0.05;
+          detectCollisionCollectible(i, gl);
+        }
+        else if(dynamicObjects[i].type === 'BARRICADE' || dynamicObjects[i].type === 'TRAIN')
+        {
+          detectDeadlyCollision(i, gl);
+        }
+        
+        // Jetpack
+        if (jetpack_flag && dynamicObjects[dynamicObjects.length - 1].translation[1] > (GROUND_LEVEL - pushDown))
+        {
+          if(dynamicObjects[i].type == 'COIN' && dynamicObjects[i].jetpack == true)
+          {
+            ;
+          }
+          else
+          {
+            dynamicObjects[i].translation[1] -= 0.050000000000000000;
+          }
+        }
+        else if (!jetpack_flag && dynamicObjects[dynamicObjects.length - 1].translation[1] < GROUND_LEVEL)
+        {
+          dynamicObjects[i].translation[1] += 0.10000000000000000;
+        }
+        
+        // Magnet 
+        if(magnet_flag)
+        {
+          if(dynamicObjects[i].type == 'COIN')
+          {
+            let x_distance = Math.abs(staticObjects[0].translation[0] - dynamicObjects[i].translation[0]);
+            let z_distance = Math.abs(staticObjects[0].translation[2] - dynamicObjects[i].translation[2]);
+            if(x_distance <= 6.5 && z_distance <= 4.0)
+            {
+              coins += 1;
+              dynamicObjects.splice(i, 1);
+              dynamicBuffers.splice(i, 1);
+            }
+          }
         }
 
         drawScene(gl, programInfo, dynamicBuffers[i], deltaTime, dynamicObjects[i], projectionMatrix);
       }
       
-      if (direction[0])
-      {
-        switch (staticObjects[0].translation[0])
+      // Movement: Right and Left
+      if(speed > 0)
+      {  
+        // Going left
+        if (direction[0])
         {
-          case M_TRACK:
-            staticObjects[0].translation[0] = L_TRACK;
-            direction[0] = false;
-            break;
-          case R_TRACK:
-            staticObjects[0].translation[0] = M_TRACK;
-            direction[0] = false;
-            break;
-          default:
-            direction[0] = false;
-            break;
+          switch (staticObjects[0].translation[0])
+          {
+            case M_TRACK:
+              staticObjects[0].translation[0] = L_TRACK;
+              if(checkDeadlyCollision(staticObjects[0].translation))
+              {
+                staticObjects[0].translation[0] = M_TRACK;
+                speed = MIN_SPEED;
+                distance = 0.0;
+                danger_flag = true;
+                setTimeout(() => {
+                  danger_flag = false;
+                }, 10000);
+              }
+              direction[0] = false;
+              break;
+            case R_TRACK:
+              staticObjects[0].translation[0] = M_TRACK;
+              if(checkDeadlyCollision(staticObjects[0].translation))
+              {
+                staticObjects[0].translation[0] = R_TRACK;
+                speed = MIN_SPEED;
+                distance = 0.0;
+                danger_flag = true;
+                setTimeout(() => {
+                  danger_flag = false;
+                }, 10000);
+              }
+              direction[0] = false;
+              break;
+            default:
+              direction[0] = false;
+              break;
+          }
         }
-      }
-      else if (direction[3])
-      {
-        switch (staticObjects[0].translation[0]) 
+        // Going right
+        else if (direction[3])
         {
-          case M_TRACK:
-            staticObjects[0].translation[0] = R_TRACK;
-            direction[3] = false;
-            break;
-          case L_TRACK:
-            staticObjects[0].translation[0] = M_TRACK;
-            direction[3] = false;
-            break;
-          default:
-            direction[3] = false;
-            break;
+          switch (staticObjects[0].translation[0]) 
+          {
+            case M_TRACK:
+              staticObjects[0].translation[0] = R_TRACK;
+              if(checkDeadlyCollision(staticObjects[0].translation))
+              {
+                staticObjects[0].translation[0] = M_TRACK;
+                speed = MIN_SPEED;
+                distance = 0.0;
+                danger_flag = true;
+                setTimeout(() => {
+                  danger_flag = false;
+                }, 10000);
+              }
+              direction[3] = false;
+              break;
+            case L_TRACK:
+              staticObjects[0].translation[0] = M_TRACK;
+              if(checkDeadlyCollision(staticObjects[0].translation))
+              {
+                staticObjects[0].translation[0] = L_TRACK;
+                speed = MIN_SPEED;
+                distance = 0.0;
+                danger_flag = true;
+                setTimeout(() => {
+                  danger_flag = false;
+                }, 10000);
+              }
+              direction[3] = false;
+              break;
+            default:
+              direction[3] = false;
+              break;
+          }
         }
       }
         
-      // Jumping
+      // Movement: Jumping and Ducking
       if(direction[1] && player_position == ON_GROUND)
       {
         direction[1] = false;
         gravity = false;
         base = staticObjects[0].translation[1];
       }
-      // Ducking
       else if(direction[2])
       {
         direction[2] = false;
@@ -318,10 +402,31 @@ function main() {
 
       for(i in staticObjects)
       {
-        if(staticObjects[i].type == 'POLICE' && distance > 350.0 && staticObjects[i].translation[2] < 3.0)
+        if(speed == 0 && staticObjects[i].type == 'POLICE')
+        {
+          if(staticObjects[1].translation[2] >= -7.9)
+          {
+            staticObjects[1].translation[2] -= 0.5;
+          }
+          else
+          {
+            GAME = false;
+            // console.log(`Coins: ${coins}`);
+            // console.log(`Distance: ${distance}`);
+            // console.log("GAME OVER");
+          }
+        }
+        else if(!danger_flag && staticObjects[i].type == 'POLICE' && distance > 550.0 && staticObjects[i].translation[2] < 3.0)
         {
           staticObjects[i].translation[2] += 0.05;
         }
+        else if(danger_flag && staticObjects[i].type == 'POLICE' && staticObjects[i].translation[2] > -6.0)
+        {
+          staticObjects[i].translation[2] -= 0.2;
+        }
+
+        staticObjects[1].translation[0] = staticObjects[0].translation[0];
+        
         drawScene(gl, programInfo, staticBuffers[i], deltaTime, staticObjects[i], projectionMatrix);
       }
     }
