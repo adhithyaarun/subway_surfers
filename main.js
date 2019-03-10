@@ -287,6 +287,38 @@ function main() {
           }
         }
 
+        // Oil and Banana
+        if(dynamicObjects[i].type === 'OIL' || dynamicObjects[i].type === 'BANANA')
+        {
+          if(dynamicObjects[i].translation[0] == staticObjects[0].translation[0] && Math.abs(dynamicObjects[i].translation[2] - staticObjects[0].translation[2]) < 15.0)
+          {
+            let dist = Math.sqrt(Math.pow(staticObjects[0].translation[0] - dynamicObjects[i].translation[0], 2) + Math.pow(staticObjects[0].translation[1] - dynamicObjects[i].translation[1], 2) + Math.pow(staticObjects[0].translation[2] - dynamicObjects[i].translation[2], 2));
+            if(dist <= 0.65)
+            {
+              speed = MIN_SPEED;
+              distance = 0.0;
+              if(danger_flag)
+              {
+                speed = 0.0;
+                jump = 0.0;
+              }
+              else
+              {
+                danger_flag = true;
+                setTimeout(() => {
+                  danger_flag = false;
+                }, 10000);
+              }
+              dynamicObjects.splice(i, 1);
+              dynamicBuffers.splice(i, 1);
+            }
+          }
+          else
+          {
+            continue;
+          }
+        }
+
         drawScene(gl, programInfo, dynamicBuffers[i], deltaTime, dynamicObjects[i], projectionMatrix);
       }
       

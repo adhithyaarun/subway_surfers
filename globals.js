@@ -36,10 +36,12 @@ const TEXTURE_BOOT      = './texture/boot.jpg';
 const TEXTURE_JETPACK   = './texture/jetpack.png';
 const TEXTURE_MAGNET    = './texture/magnet.jpg';
 const TEXTURE_POLICE    = './texture/police.jpg';
-
+const TEXTURE_PLAYER    = './texture/player.jpeg';
+const TEXTURE_BANANA    = './texture/banana.jpeg';
+const TEXTURE_OIL       = './texture/oil.png';
 
 // Logic                            
-const TYPES = ['CUBE', 'GRUOND', 'TRACK', 'WALL', 'PLAYER', 'BARRICADE', 'TRAIN', 'COIN', 'BOOT', 'JETPACK', 'MAGNET'];
+const TYPES = ['CUBE', 'GRUOND', 'TRACK', 'WALL', 'PLAYER', 'BARRICADE', 'TRAIN', 'COIN', 'BOOT', 'JETPACK', 'MAGNET', 'OIL', 'BANANA'];
 const DESTRUCTIBLE = {
     'CUBE'      : true,
     'GROUND'    : false,
@@ -52,6 +54,8 @@ const DESTRUCTIBLE = {
     'BOOT'      : true,
     'JETPACK'   : true,
     'MAGNET'    : true,
+    'OIL'       : true,
+    'BANANA'    : true,
 };
 const WIN_LENGTH = 6350.0;
 

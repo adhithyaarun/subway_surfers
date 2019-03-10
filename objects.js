@@ -569,13 +569,13 @@ function createPlayer(x, y, z, r, s, gl) {
         ],
         translation: [x, y, z],
         rotation: r,
-        texture: loadTexture(gl, TEXTURE_PLAIN),
+        texture: loadTexture(gl, TEXTURE_PLAYER),
         textureCoordinates: [
             // Front
-            0.0, 0.0,
-            1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
 
             // Back
             0.0, 0.0,
@@ -1562,6 +1562,266 @@ function createMagnet(x, y, z, r, s, gl) {
     return magnet;
 }
 
+function createOil(x, y, z, r, s, gl) {
+    let oil = {
+        positions: [
+            // Front face
+            -0.4 * s, -0.4 * s, 0.4* s,
+             0.4 * s, -0.4 * s, 0.4* s,
+             0.4 * s,  0.4 * s, 0.4* s,
+            -0.4 * s,  0.4 * s, 0.4* s,
+
+            // Back face
+            -0.4 * s, -0.4 * s, -0.4 * s,
+             0.4 * s, -0.4 * s, -0.4 * s,
+             0.4 * s,  0.4 * s, -0.4 * s,
+            -0.4 * s,  0.4 * s, -0.4 * s,
+
+            // Right face
+             0.4 * s, -0.4 * s,  0.4 * s,
+             0.4 * s, -0.4 * s, -0.4 * s,
+             0.4 * s,  0.4 * s, -0.4 * s,
+             0.4 * s,  0.4 * s,  0.4 * s,
+
+            // Left face
+            -0.4 * s, -0.4 * s,  0.4 * s,
+            -0.4 * s, -0.4 * s, -0.4 * s,
+            -0.4 * s,  0.4 * s, -0.4 * s,
+            -0.4 * s,  0.4 * s,  0.4 * s,
+
+            // Top face
+            -0.4 * s,  0.4 * s,  0.4 * s,
+             0.4 * s,  0.4 * s,  0.4 * s,
+             0.4 * s,  0.4 * s, -0.4 * s,
+            -0.4 * s,  0.4 * s, -0.4 * s,
+
+            // Bottom face
+            -0.4 * s, -0.4 * s,  0.4 * s,
+             0.4 * s, -0.4 * s,  0.4 * s,
+             0.4 * s, -0.4 * s, -0.4 * s,
+            -0.4 * s, -0.4 * s, -0.4 * s,
+        ],
+        indices: [
+             0,  1,  2,      0,  2,  3, // front
+             4,  5,  6,      4,  6,  7, // back
+             8, 11, 10,      8,  9, 10, // right
+            12, 15, 14,     12, 13, 14, // left
+            17, 16, 18,     16, 18, 19, // top
+            20, 21, 23,     21, 23, 22, // bottom
+        ],
+        translation: [x, y, z],
+        rotation: r,
+        texture: loadTexture(gl, TEXTURE_OIL),
+        textureCoordinates: [
+            // Front
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Back
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Right
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Left
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+        ],
+        vertexNormals: [
+            // Front
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+
+            // Back
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+
+            // Right
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+
+            // Left
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+
+            // Top
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+
+            // Bottom
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+        ],
+        type: 'OIL',
+    };
+
+    return oil;
+}
+
+function createBanana(x, y, z, r, s, gl) {
+    let banana = {
+        positions: [
+            // Front face
+            -0.4 * s, -0.4 * s, 0.4 * s,
+             0.4 * s, -0.4 * s, 0.4 * s,
+             0.4 * s,  0.4 * s, 0.4 * s,
+            -0.4 * s,  0.4 * s, 0.4 * s,
+
+            // Back face
+            -0.4 * s, -0.4 * s, -0.4 * s,
+             0.4 * s, -0.4 * s, -0.4 * s,
+             0.4 * s,  0.4 * s, -0.4 * s,
+            -0.4 * s,  0.4 * s, -0.4 * s,
+
+            // Right face
+             0.4 * s, -0.4 * s,  0.4 * s,
+             0.4 * s, -0.4 * s, -0.4 * s,
+             0.4 * s,  0.4 * s, -0.4 * s,
+             0.4 * s,  0.4 * s,  0.4 * s,
+
+            // Left face
+            -0.4 * s, -0.4 * s,  0.4 * s,
+            -0.4 * s, -0.4 * s, -0.4 * s,
+            -0.4 * s,  0.4 * s, -0.4 * s,
+            -0.4 * s,  0.4 * s,  0.4 * s,
+
+            // Top face
+            -0.4 * s,  0.4 * s,  0.4 * s,
+             0.4 * s,  0.4 * s,  0.4 * s,
+             0.4 * s,  0.4 * s, -0.4 * s,
+            -0.4 * s,  0.4 * s, -0.4 * s,
+
+            // Bottom face
+            -0.4 * s, -0.4 * s,  0.4 * s,
+             0.4 * s, -0.4 * s,  0.4 * s,
+             0.4 * s, -0.4 * s, -0.4 * s,
+            -0.4 * s, -0.4 * s, -0.4 * s,
+        ],
+        indices: [
+             0,  1,  2,      0,  2,  3, // front
+             4,  5,  6,      4,  6,  7, // back
+             8, 11, 10,      8,  9, 10, // right
+            12, 15, 14,     12, 13, 14, // left
+            17, 16, 18,     16, 18, 19, // top
+            20, 21, 23,     21, 23, 22, // bottom
+        ],
+        translation: [x, y, z],
+        rotation: r,
+        texture: loadTexture(gl, TEXTURE_BANANA),
+        textureCoordinates: [
+            // Front
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Back
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Right
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Left
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+        ],
+        vertexNormals: [
+            // Front
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+            0.0,  0.0,  1.0,
+
+            // Back
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+            0.0,  0.0, -1.0,
+
+            // Right
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+            1.0,  0.0,  0.0,
+
+            // Left
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+            -1.0,  0.0,  0.0,
+
+            // Top
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+
+            // Bottom
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+            0.0, -1.0,  0.0,
+        ],
+        type: 'BANANA',
+    };
+
+    return banana;
+}
+
 // Initiation methods
 function createDynamic(gl) {
     // Cubes
@@ -1604,7 +1864,29 @@ function createDynamic(gl) {
     dynamicObjects.push(createBar   (R_TRACK,-2.5, -380.0,    [0.0, 0.0, 0.0],   1.0, gl));
     coinsForBarricade(gl, dynamicObjects.length - 1);    
     dynamicObjects.push(createBar   (M_TRACK,-2.5, -400.0,    [0.0, 0.0, 0.0],   1.0, gl));
-    coinsForBarricade(gl, dynamicObjects.length - 1);    
+    coinsForBarricade(gl, dynamicObjects.length - 1);  
+    
+    // Oil and Banana
+    dynamicObjects.push(createOil   (-3.0 * getRandomInt(-1, 1), -2.2, -1.0 * getRandomInt(100, 200), [0.0, 0.0, 0.0], 1.0, gl));
+    dynamicObjects.push(createBanana(-3.0 * getRandomInt(-1, 1), -2.2, -1.0 * getRandomInt(250, 350), [0.0, 0.0, 0.0], 1.0, gl));
+    var bananas = 1;
+    var oil_spills = 1;
+    var prev = dynamicObjects[dynamicObjects.length - 1];
+    while(bananas < 16 || oil_spills < 16)
+    {
+        let rand = Math.random();
+        prev = dynamicObjects[dynamicObjects.length - 1];
+        if(rand < 0.5)
+        {
+            dynamicObjects.push(createOil   (-3.0 * getRandomInt(-1, 1), -2.2, -1.0 * getRandomInt(Math.abs(prev.translation[2]) + 100, Math.abs(prev.translation[2]) + 200), [0.0, 0.0, 0.0], 1.0, gl));
+            oil_spills += 1;
+        }
+        else
+        {
+            dynamicObjects.push(createBanana(-3.0 * getRandomInt(-1, 1), -2.2, -1.0 * getRandomInt(Math.abs(prev.translation[2]) + 100, Math.abs(prev.translation[2]) + 200), [0.0, 0.0, 0.0], 1.0, gl));
+            bananas += 1;
+        }
+    }
     
     // Train
     dynamicObjects.push(createTrain (R_TRACK,-1.8, -160.0,    [0.0, 0.0, 0.0],   1.0, gl));
@@ -1681,7 +1963,7 @@ function createDynamic(gl) {
     var boots = 1;
     var magnets = 1;
     var rand = Math.random();
-    var prev = dynamicObjects[dynamicObjects.length - 1];
+    prev = dynamicObjects[dynamicObjects.length - 1];
     while(jetpacks < 3 || boots < 5 || magnets < 6)
     {
         rand = Math.random();
