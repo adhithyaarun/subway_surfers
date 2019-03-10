@@ -1953,14 +1953,14 @@ function createCity(x, y, z, r, s, gl) {
 }
 
 // Initiation methods
-function createDynamic(gl) {
+function createDynamic(gl) {    
     var last = -20.0;
     // Barricade & Coins
     for(let i=0; i<15; ++i)
     {
         last = last - getRandomInt(20, 50);
         dynamicObjects.push(createBar (-3.0 * getRandomInt(-1, 1), -2.5, last, [0.0, 0.0, 0.0], 1.0, gl));
-        coinsForBarricade(gl, dynamicObjects.length);      
+        coinsForBarricade(gl, dynamicObjects.length - 1);      
     }
     
     // Oil and Banana
@@ -1990,8 +1990,8 @@ function createDynamic(gl) {
     for(let i=0; i<10; ++i)
     {
         last = last - getRandomInt(50, 80);
-        dynamicObjects.push(createTrain (R_TRACK,-1.8, last,    [0.0, 0.0, 0.0],   1.0, gl));
-        coinsForTrain(gl, dynamicObjects.length);
+        dynamicObjects.push(createTrain (-3.0 * getRandomInt(-1, 1),-1.8, last,    [0.0, 0.0, 0.0],   1.0, gl));
+        coinsForTrain(gl, dynamicObjects.length - 1);
     }
 
     // Track
@@ -2036,18 +2036,6 @@ function createDynamic(gl) {
     dynamicObjects.push(createWall  ( 11.5,  -3.0, -105.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 5
     dynamicObjects.push(createWall  (-11.5,  -3.0, -130.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 6
     dynamicObjects.push(createWall  ( 11.5,  -3.0, -130.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 6
-    dynamicObjects.push(createWall  (-11.5,  -3.0, -155.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 7
-    dynamicObjects.push(createWall  ( 11.5,  -3.0, -155.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 7
-    dynamicObjects.push(createWall  (-11.5,  -3.0, -180.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 8
-    dynamicObjects.push(createWall  ( 11.5,  -3.0, -180.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 8
-    dynamicObjects.push(createWall  (-11.5,  -3.0, -205.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 9
-    dynamicObjects.push(createWall  ( 11.5,  -3.0, -205.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 9
-    dynamicObjects.push(createWall  (-11.5,  -3.0, -230.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 10
-    dynamicObjects.push(createWall  ( 11.5,  -3.0, -230.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 10
-    dynamicObjects.push(createWall  (-11.5,  -3.0, -255.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 11
-    dynamicObjects.push(createWall  ( 11.5,  -3.0, -255.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 11
-    dynamicObjects.push(createWall  (-11.5,  -3.0, -280.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 12
-    dynamicObjects.push(createWall  ( 11.5,  -3.0, -280.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 12
     
     // Jumping boots, Magnets and Jetpacks
     dynamicObjects.push(createMagnet (-3.0 * getRandomInt(-1, 1),  -2.0, (getRandomInt(25, 80)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
@@ -2079,23 +2067,6 @@ function createDynamic(gl) {
             magnets += 1;
         }
     }
-    
-    // Coin mania
-    var coins_dist = dynamicObjects[dynamicObjects.length - 1].translation[2] - 50.0;
-    let count = 0;
-    while(Math.abs(coins_dist - 3.0) < (WIN_LENGTH - 10.0) && count < 100)
-    {
-        dynamicObjects.push(createCoin(L_TRACK, -2.0, coins_dist, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
-        dynamicObjects.push(createCoin(M_TRACK, -2.0, coins_dist, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
-        dynamicObjects.push(createCoin(R_TRACK, -2.0, coins_dist, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
-        coins_dist -= getRandomInt(15, 30);
-        count += 3;
-    }
-
-    for(let i=0; i<50; ++i)
-    {
-        dynamicObjects.push(createCoin(-3.0 * getRandomInt(-1, 1), -2.0, getRandomInt(50, 5400), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
-    }
 
     // Ground
     dynamicObjects.push(createGround(0.0, -4.0,  -5.0, [0.0, 0.0, 0.0], 1.0, gl)); 
@@ -2114,15 +2085,15 @@ function coinsForBarricade(gl, n) {
     {
         if(i < 4)
         {
-            dynamicObjects.splice(n + i, 0, createCoin(dynamicObjects[n-1].translation[0], -2.0, dynamicObjects[n-1].translation[2] + ((4-i) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -2.0, dynamicObjects[n].translation[2] + ((4-i) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
         }
         else if(i == 4)
         {
-            dynamicObjects.splice(n + i, 0, createCoin(dynamicObjects[n-1].translation[0], -1.0, dynamicObjects[n-1].translation[2], [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -1.0, dynamicObjects[n].translation[2], [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
         }
         else
         {                                                                                   
-            dynamicObjects.splice(n + i, 0, createCoin(dynamicObjects[n-1].translation[0], -2.0, dynamicObjects[n-1].translation[2] - ((i-4) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -2.0, dynamicObjects[n].translation[2] - ((i-4) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
         }
     }
 }
@@ -2132,15 +2103,15 @@ function coinsForTrain(gl, n) {
     {
         if(i < 4)
         {
-            dynamicObjects.splice(n + i, 0, createCoin(dynamicObjects[n-1].translation[0], 0.4, dynamicObjects[n-1].translation[2] + ((4-i) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], 0.4, dynamicObjects[n].translation[2] + ((4-i) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
         }
         else if(i == 4)
         {
-            dynamicObjects.splice(n + i, 0, createCoin(dynamicObjects[n-1].translation[0], 0.4, dynamicObjects[n-1].translation[2], [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], 0.4, dynamicObjects[n].translation[2], [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
         }
         else
         {                                                                                   
-            dynamicObjects.splice(n + i, 0, createCoin(dynamicObjects[n-1].translation[0], 0.4, dynamicObjects[n-1].translation[2] - ((i-4) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
+            dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], 0.4, dynamicObjects[n].translation[2] - ((i-4) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
         }
     }
 }
