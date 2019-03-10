@@ -249,6 +249,14 @@ function main() {
               case 'WALL':
                 dynamicObjects[i].translation[2] -= 25 * 12; 
                 break;
+              case 'TRAIN':
+                dynamicObjects[i].translation[2] -= 900;
+                coinsForTrain(gl, i+1); 
+                break;
+                case 'BARRICADE':
+                dynamicObjects[i].translation[2] -= 800; 
+                coinsForBarricade(gl, i+1); 
+                break;
               case 'COIN':
                 dynamicObjects.splice(i, 1, createCoin(-3.0 * getRandomInt(-1, 1), -2.0, getRandomInt(50, 5400), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
                 dynamicBuffers.splice(i, 1, initBuffers(gl, dynamicObjects[i]));
