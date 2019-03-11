@@ -45,7 +45,7 @@ const TEXTURE_CITY      = './texture/city.jpg';
 const WIN_LENGTH = 6350.0;
 const TYPES = ['CUBE', 'GRUOND', 'TRACK', 'WALL', 'PLAYER', 'BARRICADE', 'TRAIN', 'COIN', 'BOOT', 'JETPACK', 'MAGNET', 'OIL', 'BANANA', 'CITY'];
 const DESTRUCTIBLE = {
-    'CUBE'      : true,
+    'CUBE'      : false,
     'GROUND'    : false,
     'TRACK'     : false,
     'WALL'      : false,
@@ -53,11 +53,11 @@ const DESTRUCTIBLE = {
     'BARRICADE' : false,
     'TRAIN'     : false,
     'COIN'      : false,
-    'BOOT'      : true,
-    'JETPACK'   : true,
-    'MAGNET'    : true,
-    'OIL'       : true,
-    'BANANA'    : true,
+    'BOOT'      : false,
+    'JETPACK'   : false,
+    'MAGNET'    : false,
+    'OIL'       : false,
+    'BANANA'    : false,
     'CITY'      : false,
 };
 
@@ -90,6 +90,8 @@ var speed = MIN_SPEED;
 var gravity = true;
 var player_position = ON_GROUND;
 var base = PLAYER_GROUND;
+var ground = GROUND_LEVEL;
+var first_ground = true;
 
 // Danger
 var danger_flag = false;
@@ -101,6 +103,10 @@ var coins = 0;
 var jetpack_flag = false;
 var pushDown = 8.0;
 var magnet_flag = false;
+
+// Positioning
+var last_powerup = 0.0;
+var last_slip = 0.0;
 
 // Lighting
 var flash = false;

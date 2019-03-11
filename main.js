@@ -227,45 +227,54 @@ function main() {
         // Handle objects out of scope of view
         if (dynamicObjects[i].translation[2] > 32.0)
         {
-          if(DESTRUCTIBLE[dynamicObjects[i].type])
+          switch(dynamicObjects[i].type)
           {
-            dynamicObjects.splice(i, 1);
-            dynamicBuffers.splice(i, 1);
-            continue;
-          }
-          else
-          {
-            switch(dynamicObjects[i].type)
-            {
-              case "TRACK":
-                dynamicObjects[i].translation[2] -= 16 * 9; 
-                break;
-              case 'GROUND':
-                if(dynamicObjects[i].translation[2] > 96.0)
-                {
-                  dynamicObjects[i].translation[2] -= 100 * 2; 
-                }
-                break;
-              case 'WALL':
-                dynamicObjects[i].translation[2] -= 25 * 6; 
-                break;
-              case 'TRAIN':
-                dynamicObjects[i].translation[2] -= 900;
-                break;
-                case 'BARRICADE':
-                dynamicObjects[i].translation[2] -= 800; 
-                break;
-              case 'COIN':
-                if(dynamicObjects[i].jetpack)
-                {
-                  dynamicObjects.splice(i, 1);
-                  dynamicBuffers.splice(i, 1);
-                }
+            case "TRACK":
+              dynamicObjects[i].translation[2] -= 16 * 9; 
+              break;
+            case 'GROUND':
+              if(dynamicObjects[i].translation[2] > 96.0)
+              {
+                dynamicObjects[i].translation[2] -= 100 * 2; 
+              }
+              break;
+            case 'WALL':
+              dynamicObjects[i].translation[2] -= 25 * 5; 
+              break;
+            case 'TRAIN':
+              dynamicObjects[i].translation[2] -= 300;
+              coinsForTrain(gl, i);
+              break;
+              case 'BARRICADE':
+              dynamicObjects[i].translation[2] -= 370;
+              coinsForBarricade(gl, i); 
+              break;
+            case 'COIN':
+              if (dynamicObjects[i].jetpack || dynamicObjects[i].train)
+              {
+                dynamicObjects.splice(i, 1);
+                dynamicBuffers.splice(i, 1);
+              }
+              else
+              {
                 dynamicObjects[i].translation[2] = getRandomInt(actual_distance, 5400);
                 dynamicObjects[i].translation[1] = -2.0;
                 dynamicObjects[i].translation[0] = getRandomInt(-1, 1);
-                break;
-            }
+              }
+              break;
+            case 'BOOT':
+            case 'JETPACK':
+            case 'MAGNET':
+              dynamicObjects[i].translation[0] = -3.0 * getRandomInt(-1, 1);
+              dynamicObjects[i].translation[2] = -1.0 * getRandomInt(Math.abs(last_powerup) + 250, Math.abs(last_powerup) + 400);
+              last_powerup = dynamicObjects[i].translation[2];
+              break;
+            case 'OIL':
+            case 'BANANA':
+              dynamicObjects[i].translation[0] = -3.0 * getRandomInt(-1, 1);
+              dynamicObjects[i].translation[2] = -1.0 * getRandomInt(Math.abs(last_slip) + 100, Math.abs(last_slip) + 200);
+              last_slip = dynamicObjects[i].translation[2];
+              break;
           }
         }
 
@@ -281,7 +290,7 @@ function main() {
         }
         
         // Jetpack
-        if (jetpack_flag && dynamicObjects[dynamicObjects.length - 1].translation[1] > (GROUND_LEVEL - pushDown))
+        if (jetpack_flag && ground > (GROUND_LEVEL - pushDown))
         {
           if(dynamicObjects[i].type == 'COIN' && dynamicObjects[i].jetpack == true)
           {
@@ -290,11 +299,29 @@ function main() {
           else
           {
             dynamicObjects[i].translation[1] -= 0.050000000000000000;
+            if(dynamicObjects[i].type === 'GROUND' && first_ground)
+            {
+              ground -= 0.050000000000000000;
+              first_ground = false;
+            }
+            else if(dynamicObjects[i].type === 'GROUND' && !first_ground)
+            {
+              first_ground = true;
+            }
           }
         }
-        else if (!jetpack_flag && dynamicObjects[dynamicObjects.length - 1].translation[1] < GROUND_LEVEL)
+        else if (!jetpack_flag && ground < GROUND_LEVEL)
         {
           dynamicObjects[i].translation[1] += 0.10000000000000000;
+          if(dynamicObjects[i].type === 'GROUND' && first_ground)
+          {
+            ground += 0.10000000000000000;
+            first_ground = false;
+          }
+          else if(dynamicObjects[i].type === 'GROUND' && !first_ground)
+          {
+            first_ground = true;
+          }
         }
         
         // Magnet 
@@ -336,8 +363,9 @@ function main() {
                   danger_flag = false;
                 }, 10000);
               }
-              dynamicObjects.splice(i, 1);
-              dynamicBuffers.splice(i, 1);
+              dynamicObjects[i].translation[0] = -3.0 * getRandomInt(-1, 1);
+              dynamicObjects[i].translation[2] = -1.0 * getRandomInt(Math.abs(last_slip) + 100, Math.abs(last_slip) + 200);
+              last_slip = dynamicObjects[i].translation[2];
             }
           }
           else
@@ -480,7 +508,6 @@ function main() {
         if(staticObjects[0].translation[1] > base)
         {
           staticObjects[0].translation[1] -= 0.1;
-          console.log(staticObjects[0].translation[1]);
           checkTrainBelowMe(staticObjects[0].translation);
         }
         else

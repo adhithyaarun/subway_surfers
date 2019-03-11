@@ -1954,9 +1954,11 @@ function createCity(x, y, z, r, s, gl) {
 
 // Initiation methods
 function createDynamic(gl) {    
-    var last = -20.0;
     // Barricade & Coins
-    for(let i=0; i<15; ++i)
+    var last = -20.0;
+    dynamicObjects.push(createBar (-3.0 * getRandomInt(-1, 1), -2.5, last, [0.0, 0.0, 0.0], 1.0, gl));
+    coinsForBarricade(gl, dynamicObjects.length - 1);      
+    for(let i=0; i<6; ++i)
     {
         last = last - getRandomInt(20, 50);
         dynamicObjects.push(createBar (-3.0 * getRandomInt(-1, 1), -2.5, last, [0.0, 0.0, 0.0], 1.0, gl));
@@ -1966,28 +1968,13 @@ function createDynamic(gl) {
     // Oil and Banana
     dynamicObjects.push(createOil   (-3.0 * getRandomInt(-1, 1), -2.2, -1.0 * getRandomInt(100, 200), [0.0, 0.0, 0.0], 1.0, gl));
     dynamicObjects.push(createBanana(-3.0 * getRandomInt(-1, 1), -2.2, -1.0 * getRandomInt(250, 350), [0.0, 0.0, 0.0], 1.0, gl));
-    var bananas = 1;
-    var oil_spills = 1;
-    var prev = dynamicObjects[dynamicObjects.length - 1];
-    while(bananas < 12 || oil_spills < 12)
-    {
-        let rand = Math.random();
-        prev = dynamicObjects[dynamicObjects.length - 1];
-        if(rand < 0.5)
-        {
-            dynamicObjects.push(createOil   (-3.0 * getRandomInt(-1, 1), -2.2, -1.0 * getRandomInt(Math.abs(prev.translation[2]) + 100, Math.abs(prev.translation[2]) + 200), [0.0, 0.0, 0.0], 1.0, gl));
-            oil_spills += 1;
-        }
-        else
-        {
-            dynamicObjects.push(createBanana(-3.0 * getRandomInt(-1, 1), -2.2, -1.0 * getRandomInt(Math.abs(prev.translation[2]) + 100, Math.abs(prev.translation[2]) + 200), [0.0, 0.0, 0.0], 1.0, gl));
-            bananas += 1;
-        }
-    }
+    last_slip = dynamicObjects[dynamicObjects.length - 1].translation[2];
     
-    last = -110.0;
     // Train
-    for(let i=0; i<10; ++i)
+    last = -110.0;
+    dynamicObjects.push(createTrain (-3.0 * getRandomInt(-1, 1),-1.8, last,    [0.0, 0.0, 0.0],   1.0, gl));
+    coinsForTrain(gl, dynamicObjects.length - 1);
+    for(let i=0; i<3; ++i)
     {
         last = last - getRandomInt(50, 80);
         dynamicObjects.push(createTrain (-3.0 * getRandomInt(-1, 1),-1.8, last,    [0.0, 0.0, 0.0],   1.0, gl));
@@ -2034,39 +2021,12 @@ function createDynamic(gl) {
     dynamicObjects.push(createWall  ( 11.5,  -3.0,  -80.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 4
     dynamicObjects.push(createWall  (-11.5,  -3.0, -105.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 5
     dynamicObjects.push(createWall  ( 11.5,  -3.0, -105.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 5
-    dynamicObjects.push(createWall  (-11.5,  -3.0, -130.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 6
-    dynamicObjects.push(createWall  ( 11.5,  -3.0, -130.0,    [0.0, 0.0, 0.0],   1.0, gl));    // Set 6
     
     // Jumping boots, Magnets and Jetpacks
     dynamicObjects.push(createMagnet (-3.0 * getRandomInt(-1, 1),  -2.0, (getRandomInt(25, 80)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
     dynamicObjects.push(createBoot   (-3.0 * getRandomInt(-1, 1),  -2.0, (getRandomInt(185, 285)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
     dynamicObjects.push(createJetpack(-3.0 * getRandomInt(-1, 1),  -2.0, (getRandomInt(550, 640)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
-    var jetpacks = 1;
-    var boots = 1;
-    var magnets = 1;
-    var rand = Math.random();
-    prev = dynamicObjects[dynamicObjects.length - 1];
-    while(jetpacks < 3 || boots < 5 || magnets < 6)
-    {
-        rand = Math.random();
-        prev = dynamicObjects[dynamicObjects.length - 1];
-
-        if(rand < 0.33 && boots < 5)
-        {
-            dynamicObjects.push(createBoot   (-3.0 * getRandomInt(-1, 1),  -2.0, (getRandomInt(Math.abs(prev.translation[2]) + 250, Math.abs(prev.translation[2]) + 400)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
-            boots += 1;
-        }
-        else if(rand >= 0.33 && rand <= 0.66)
-        {
-            dynamicObjects.push(createJetpack(-3.0 * getRandomInt(-1, 1), -2.0, (getRandomInt(Math.abs(prev.translation[2]) + 250, Math.abs(prev.translation[2]) + 400)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
-            jetpacks += 1;
-        }
-        else
-        {
-            dynamicObjects.push(createMagnet(-3.0 * getRandomInt(-1, 1), -2.0, (getRandomInt(Math.abs(prev.translation[2]) + 250, Math.abs(prev.translation[2]) + 400)) * -1.0, [0.0, 0.0, 0.0], 0.3, gl));
-            magnets += 1;
-        }
-    }
+    last_powerup = dynamicObjects[dynamicObjects.length - 1].translation[2];
 
     // Ground
     dynamicObjects.push(createGround(0.0, -4.0,  -5.0, [0.0, 0.0, 0.0], 1.0, gl)); 
@@ -2081,6 +2041,11 @@ function createStatic(gl) {
 
 // Support methods 
 function coinsForBarricade(gl, n) {
+    var flag = true;
+    if(n == (dynamicObjects.length - 1))
+    {
+        flag = false;
+    }
     for(var i=0; i<9; ++i)
     {
         if(i < 4)
@@ -2095,10 +2060,19 @@ function coinsForBarricade(gl, n) {
         {                                                                                   
             dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], -2.0, dynamicObjects[n].translation[2] - ((i-4) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
         }
+        if(flag)
+        {
+            dynamicBuffers.push(initBuffers(gl, dynamicObjects[dynamicObjects.length - 1]));
+        }
     }
 }
 
 function coinsForTrain(gl, n) {
+    var flag = true;
+    if(n == (dynamicObjects.length - 1))
+    {
+        flag = false;
+    }
     for(var i=0; i<9; ++i)
     {
         if(i < 4)
@@ -2112,6 +2086,10 @@ function coinsForTrain(gl, n) {
         else
         {                                                                                   
             dynamicObjects.push(createCoin(dynamicObjects[n].translation[0], 0.4, dynamicObjects[n].translation[2] - ((i-4) * 3), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, true));
+        }
+        if(flag)
+        {
+            dynamicBuffers.push(initBuffers(gl, dynamicObjects[dynamicObjects.length - 1]));
         }
     }
 }
@@ -2140,8 +2118,8 @@ function detectCollisionCollectible(i, gl) {
         else if (dynamicObjects[i].type === 'COIN')
         {
             coins += 1;
-            dynamicObjects.splice(i, 1, createCoin(-3.0 * getRandomInt(-1, 1), -2.0, getRandomInt(50, 5400), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
-            dynamicBuffers.splice(i, 1, initBuffers(gl, dynamicObjects[i]));
+            dynamicObjects[i].translation[0] = -3.0 * getRandomInt(-1, 1);
+            dynamicObjects[i].translation[2] = getRandomInt(actual_distance, 5400);
         }
         else if (dynamicObjects[i].type === 'JETPACK')
         {
@@ -2151,8 +2129,8 @@ function detectCollisionCollectible(i, gl) {
             var prev_position = staticObjects[0].translation[2] - 30.0;
             for(let i=0; i<102; ++i)
             {
-                dynamicObjects.splice(dynamicObjects.length - 2, 0, createCoin(getRandomInt(-1, 1) * 3.0, -2.0, prev_position - 3.0, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, true, false));
-                dynamicBuffers.splice(dynamicBuffers.length - 2, 0, initBuffers(gl, dynamicObjects[dynamicObjects.length - 3]));
+                dynamicObjects.push(createCoin(getRandomInt(-1, 1) * 3.0, -2.0, prev_position - 3.0, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, true, false));
+                dynamicBuffers.push(initBuffers(gl, dynamicObjects[dynamicObjects.length - 3]));
                 prev_position -= 3.0;
             }
 
@@ -2171,8 +2149,9 @@ function detectCollisionCollectible(i, gl) {
         }
         if (dynamicObjects[i].type != 'COIN')
         {
-            dynamicObjects.splice(i, 1);
-            dynamicBuffers.splice(i, 1);
+            dynamicObjects[i].translation[0] = -3.0 * getRandomInt(-1, 1);
+            dynamicObjects[i].translation[2] = -1.0 * getRandomInt(Math.abs(last_powerup) + 250, Math.abs(last_powerup) + 400);
+            last_powerup = dynamicObjects[i].translation[2];
         }
     }
     else if(jump > 1.0) 
@@ -2183,8 +2162,8 @@ function detectCollisionCollectible(i, gl) {
             if (dynamicObjects[i].type === 'COIN')
             {
                 coins += 1;
-                dynamicObjects.splice(i, 1, createCoin(-3.0 * getRandomInt(-1, 1), -2.0, getRandomInt(50, 5400), [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, false, false));
-                dynamicBuffers.splice(i, 1, initBuffers(gl, dynamicObjects[i]));
+                dynamicObjects[i].translation[0] = -3.0 * getRandomInt(-1, 1);
+                dynamicObjects[i].translation[2] = getRandomInt(actual_distance, 5400);
             }
             else if(dynamicObjects[i].type === 'BOOT')
             {
@@ -2203,7 +2182,7 @@ function detectCollisionCollectible(i, gl) {
                 var prev_position = staticObjects[0].translation[2] - 30.0;
                 for(let i=0; i<102; ++i)
                 {
-                    dynamicObjects.splice(dynamicObjects.length - 3, 1, createCoin(getRandomInt(-1, 1) * 3.0, -2.0, prev_position - 3.0, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, true, false));
+                    dynamicObjects.push(createCoin(getRandomInt(-1, 1) * 3.0, -2.0, prev_position - 3.0, [0.0, 0.0, 45.0 * Math.PI / 180.0], 0.15, gl, true, false));
                     prev_position -= 3.0;
                 }
 
@@ -2220,10 +2199,11 @@ function detectCollisionCollectible(i, gl) {
                     magnet_flag = false;
                 }, 12000);
             }
-            if(dynamicObjects[i].type != 'COIN')
+            if (dynamicObjects[i].type != 'COIN')
             {
-                dynamicObjects.splice(i, 1);
-                dynamicBuffers.splice(i, 1);
+                dynamicObjects[i].translation[0] = -3.0 * getRandomInt(-1, 1);
+                dynamicObjects[i].translation[2] = -1.0 * getRandomInt(Math.abs(last_powerup) + 250, Math.abs(last_powerup) + 400);
+                last_powerup = dynamicObjects[i].translation[2];
             }
         }
     }   
